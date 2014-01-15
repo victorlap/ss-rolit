@@ -74,6 +74,11 @@ public class Board {
 		return getField(index(row, col));
 	}
 
+	/**
+	 * Sets a field to the desired <code>Color.VALUE</code>
+	 * @param field to change value of
+	 * @param color the new value
+	 */
 	public void setField(int field, Color color) {
 		fields[field] = color;
 	}
