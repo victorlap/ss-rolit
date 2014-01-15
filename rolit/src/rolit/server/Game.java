@@ -42,7 +42,7 @@ public class Game {
 		return (int) Math.random() * players.length;
 	}
 	
-	private void start() {
+	public void start() {
 		while (!board.gameOver()) {
             players[currentPlayer].makeMove(board);
             currentPlayer = (currentPlayer + 1) % players.length;
