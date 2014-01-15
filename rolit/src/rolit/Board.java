@@ -58,7 +58,7 @@ public class Board {
 	/**
 	 * Returns value of field at index <code>field</code>
 	 * @param field to test
-	 * @return <code>Color.VALUE</code> of the tested field
+	 * @return <code>Color</code> of the tested field
 	 */
 	public Color getField(int field) {
 		return fields[field];
@@ -68,14 +68,14 @@ public class Board {
 	 * Returns value of field at <code>row</code>,<code>col</code>
 	 * @param row of desired field
 	 * @param col of desired field
-	 * @return <code>Code.VALUE</code> of tested field
+	 * @return <code>Color</code> of tested field
 	 */
 	public Color getField(int row, int col) {
 		return getField(index(row, col));
 	}
 
 	/**
-	 * Sets a field to the desired <code>Color.VALUE</code>
+	 * Sets a field to the desired <code>Color</code>
 	 * @param field to change value of
 	 * @param color the new value
 	 */
@@ -85,8 +85,9 @@ public class Board {
 	
 	/**
 	 * Sets a field to the desired <code>Color</code>
-	 * @param row row of desired field
-	 * @
+	 * @param row row of desired field to change value of
+	 * @param col col of desired field to change value of
+	 * @param color the new value
 	 */
 	public void setField(int row, int col, Color color) {
 		setField(index(row, col), color);
@@ -120,6 +121,11 @@ public class Board {
 		return true;
 	}
 
+	/**
+	 * Returns if the color has the most fields on the <code>Board</code>
+	 * @param color
+	 * @return boolean if the color has the most fields
+	 */
 	private boolean hasMostFields(Color color) {
 		int green = countFields(Color.GREEN);
 		int blue = countFields(Color.GREEN);
