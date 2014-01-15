@@ -83,6 +83,11 @@ public class Board {
 		fields[field] = color;
 	}
 	
+	/**
+	 * Sets a field to the desired <code>Color</code>
+	 * @param row row of desired field
+	 * @
+	 */
 	public void setField(int row, int col, Color color) {
 		setField(index(row, col), color);
 	}
