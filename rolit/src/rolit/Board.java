@@ -2,6 +2,11 @@ package rolit;
 
 import java.util.Observable;
 
+/**
+ * Class that initializes and maintains the board of the Rolit game.
+ * @author Victor Lap and Yuri van Midden
+ * @version 1.0
+ */
 
 public class Board extends Observable {
 
@@ -99,7 +104,7 @@ public class Board extends Observable {
 	
 	/**
 	 * Return the last changed field
-	 * @return <code>int
+	 * @return <code>int</code> index of last changed field.
 	 */
 	public int getlastChangedField() {
 		return lastChangedField;
