@@ -3,6 +3,13 @@ package rolit.server;
 import rolit.Board;
 import rolit.Player;
 
+/**
+ * Maintains game object i.e. let players make a move and assigning the current player's turn.
+ * 
+ * @author Victor Lap and Yuri van Midden
+ * @version 1.0.0
+ */
+
 public class Game {
 	
 	// -------- VARIABLES ------
@@ -18,19 +25,19 @@ public class Game {
 	private Board board;
 
 	/**
-	 * The players
+	 * The array of players
 	 */
 	private Player[] players;
 
 	/**
-	 * The current player
+	 * Saves array index of current player
 	 */
 	private int currentPlayer;
 
 	// --------- CONSTRUCTORS ------
 
 	/**
-	 * Creates the Game
+	 * Creates a new Game from the players array.
 	 */
 	public Game(Player[] players) {
 		board = new Board();

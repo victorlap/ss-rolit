@@ -3,9 +3,10 @@ package rolit;
 import java.util.Observable;
 
 /**
- * Class that initializes and maintains the board of the Rolit game.
+ * Class that initializes and maintains the board of the RolIt game.
+ * 
  * @author Victor Lap and Yuri van Midden
- * @version 1.0
+ * @version 1.0.0
  */
 
 public class Board extends Observable {
@@ -139,8 +140,8 @@ public class Board extends Observable {
 	}
 	
 	/**
-	 * Returns <code>true</code> when every field is <code>Color.NONE</code>
-	 * @return <b>true</b> if every field is <code>Color.NONE</code>
+	 * Returns <code>true</code> when every field is <br><code>!Color.NONE</code>
+	 * @return <b>true</b> if every field is <code>!Color.NONE</code>
 	 */
 	public boolean isFull() {
 		for (int i=0; i<fields.length; i++){

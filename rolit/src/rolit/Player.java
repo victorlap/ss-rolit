@@ -1,6 +1,10 @@
 package rolit;
 
-
+/**
+ * Initializes and maintains a player object, with its attached properties
+ * @author Yuri van Midden and Victor Lap
+ * @version 1.0.0
+ */
 
 public abstract class Player {
 	
@@ -8,13 +12,16 @@ public abstract class Player {
     private Color color;
     
     /**
-     * Creates a new Player object.
-     * 
+     * Creates a new Player object and defines the name.
      */
     public Player(String theName) {
         this.name = theName;
     }
     
+    /**
+     * Sets the color of <code>this</code> player object.
+     * @param theColor of type Color.VALUE
+     */
     public void setColor (Color theColor) {
     	this.color = theColor;
     }
@@ -36,9 +43,9 @@ public abstract class Player {
     /**
      * Determines the field for the next move.
      * 
-     * @param bord
+     * @param board
      *            the current game board
-     * @return the player's choice
+     * @return <code>int</code> with the player's choice
      */
     public abstract int determineMove(Board board);
     
