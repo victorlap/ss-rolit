@@ -1,4 +1,4 @@
-package rolit.client;
+package rolit.client.view;
 
 import java.awt.Container;
 import java.awt.FlowLayout;

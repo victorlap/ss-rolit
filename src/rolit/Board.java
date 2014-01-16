@@ -236,6 +236,7 @@ public class Board extends Observable {
 
 	private void flipBetween(int field, int checkNorth) {
 		// TODO Auto-generated method stub
+		// Dit gaat nog even lastig worden.
 		
 	}
 
