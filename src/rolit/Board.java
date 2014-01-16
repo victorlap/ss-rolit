@@ -35,6 +35,14 @@ public class Board extends Observable {
 		setField(4, 4, Color.GREEN);
 	} 
 	
+	public Board copy() {
+		Board b = new Board();
+		for (int i = 0; i < fields.length; i++) {
+            b.fields[i] = this.fields[i];
+        }
+		return b;
+	}
+	
 	/**
 	 * Returns the <code>index</code> of a field in <code>row</code>,<code>col</code>
 	 * @param row of the desired field
@@ -144,12 +152,48 @@ public class Board extends Observable {
 	 * @return <b>true</b> if every field is <code>!Color.NONE</code>
 	 */
 	public boolean isFull() {
-		for (int i=0; i<fields.length; i++){
+		for (int i=0; i < fields.length; i++){
 			if (fields[i] == Color.NONE) {
 				return false;
 			}
 		}
 		return true;
+	}
+
+	public void doMove(int field, Color color) {
+		if(checkMove(field, color)) {
+			setField(field, color);
+			
+			/**
+			 * Check in all 8 directions
+			 */
+			if(checkNorth(field, color) >= 0) {
+				flipBetween(field, checkNorth(field, color));
+			}
+			if(checkNorthEast(field, color) >= 0) {
+				flipBetween(field, checkNorthEast(field, color));
+			}
+			if(checkEast(field, color) >= 0) {
+				flipBetween(field, checkEast(field, color));
+			}
+			if(checkSouthEast(field, color) >= 0) {
+				flipBetween(field, checkSouthEast(field, color));
+			}
+			if(checkSouth(field, color) >= 0) {
+				flipBetween(field, checkSouth(field, color));
+			}
+			if(checkSouthWest(field, color) >= 0) {
+				flipBetween(field, checkSouthWest(field, color));
+			}
+			if(checkWest(field, color) >= 0) {
+				flipBetween(field, checkWest(field, color));
+			}
+			if(checkNorthWest(field, color) >= 0) {
+				flipBetween(field, checkNorthWest(field, color));
+			}
+			
+		}
+		
 	}
 
 	/**
@@ -190,4 +234,53 @@ public class Board extends Observable {
 		return count;
 	}
 
+	private void flipBetween(int field, int checkNorth) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private boolean checkMove(int field, Color color) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	private int checkNorth(int field, Color color) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	private int checkNorthEast(int field, Color color) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	private int checkEast(int field, Color color) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	
+	private int checkSouthEast(int field, Color color) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	private int checkSouth(int field, Color color) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	
+	private int checkSouthWest(int field, Color color) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	
+	private int checkWest(int field, Color color) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	
+	private int checkNorthWest(int field, Color color) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 }

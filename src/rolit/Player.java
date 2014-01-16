@@ -10,6 +10,7 @@ public abstract class Player {
 	
 	private String name;
     private Color color;
+    private boolean takesPart;
     
     /**
      * Creates a new Player object and defines the name.
@@ -24,6 +25,7 @@ public abstract class Player {
      */
     public void setColor (Color theColor) {
     	this.color = theColor;
+    	takesPart = true;
     }
     
     /**
@@ -38,6 +40,10 @@ public abstract class Player {
      */
     public Color getColor() {
         return color;
+    }
+    
+    public boolean isTakingPart() {
+    	return takesPart;
     }
     
     /**
