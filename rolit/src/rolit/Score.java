@@ -1,4 +1,4 @@
-package rolit.server;
+package rolit;
 
 public class Score {
 	

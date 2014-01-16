@@ -1,9 +1,12 @@
 package rolit;
 
+import java.util.Observable;
 
-public class Board {
+
+public class Board extends Observable {
 
 	public static final int DIM = 8;
+	public int lastChangedField;
 
 	/**
 	 * The DIM by DIM fields of the Tic Tac Toe board. See NUMBERING for the
@@ -81,6 +84,7 @@ public class Board {
 	 */
 	public void setField(int field, Color color) {
 		fields[field] = color;
+		lastChangedField = field;
 	}
 	
 	/**
@@ -92,15 +96,36 @@ public class Board {
 	public void setField(int row, int col, Color color) {
 		setField(index(row, col), color);
 	}
+	
+	/**
+	 * Return the last changed field
+	 * @return <code>int
+	 */
+	public int getlastChangedField() {
+		return lastChangedField;
+	}
 
+	/**
+	 * Check if game is over
+	 * @return <code>true</code> if <code>isFull()</code> returns <code>true</code>
+	 */
 	public boolean gameOver() {
 		return isFull();
 	}
 	
+	/**
+	 * Check whether a specific player is the winner
+	 * @param color to test
+	 * @return <code>true</code> if the tested player is the winner
+	 */
 	public boolean isWinner(Color color) {
 		return hasMostFields(color);
 	}
 
+	/**
+	 * Check whether the game has a winner
+	 * @return <code>true</code> if the game has a winner
+	 */
 	public boolean hasWinner() {
 		return isWinner(Color.GREEN) || 
 				isWinner(Color.RED)  || 
@@ -143,6 +168,11 @@ public class Board {
 		}
 	}
 
+	/**
+	 * Count the amount of fields a player has with its own color
+	 * @param color to test
+	 * @return <code>int</code> with the amount of fields a player has
+	 */
 	private int countFields(Color color) {
 		int count = 0;
 		

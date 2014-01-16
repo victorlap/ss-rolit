@@ -1,6 +1,7 @@
 package rolit;
 
 
+
 public abstract class Player {
 	
 	private String name;
@@ -10,9 +11,12 @@ public abstract class Player {
      * Creates a new Player object.
      * 
      */
-    public Player(String theName, Color theColor) {
+    public Player(String theName) {
         this.name = theName;
-        this.color = theColor;
+    }
+    
+    public void setColor (Color theColor) {
+    	this.color = theColor;
     }
     
     /**
@@ -41,11 +45,11 @@ public abstract class Player {
     /**
      * Makes a move on the board. <br>
      * 
-     * @param bord
+     * @param board
      *            the current board
      */
     public void makeMove(Board board) {
-        int keuze = determineMove(board);
-        board.setField(keuze, getColor());
+        int choice = determineMove(board);
+        board.setField(choice, getColor());
     }
 }
