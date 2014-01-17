@@ -3,10 +3,10 @@ package rolit;
 import java.util.Observable;
 
 /**
- * Class that initializes and maintains the board of the RolIt game.
+ * Class that initializes, maintains and analyzes the board of the RolIt game.
  * 
  * @author Victor Lap and Yuri van Midden
- * @version 1.0.0
+ * @version 1.2.0
  */
 
 public class Board extends Observable {
@@ -35,6 +35,10 @@ public class Board extends Observable {
 		setField(4, 4, Color.GREEN);
 	} 
 	
+	/**
+	 * Creates a new copy of the board from the current <code>fields</code> array.
+	 * @return <code>Board</code>
+	 */
 	public Board copy() {
 		Board b = new Board();
 		for (int i = 0; i < fields.length; i++) {
@@ -99,6 +103,8 @@ public class Board extends Observable {
 	public void setField(int field, Color color) {
 		fields[field] = color;
 		lastChangedField = field;
+		setChanged();
+		notifyObservers();
 	}
 	
 	/**
@@ -159,40 +165,100 @@ public class Board extends Observable {
 		}
 		return true;
 	}
-
+	
+	/*@ requires checkMove == true;
+	  
+	 */
+	/**
+	 * Does the move with <code>setField</code>, assuming it can be done and does not violate the rules i.e. there is at least one bordering field that has a color.
+	 * @param field to change <code>Color.VALUE</code> of
+	 * @param color to change the field to.
+	 */
 	public void doMove(int field, Color color) {
 		if(checkMove(field, color)) {
 			setField(field, color);
 			
-			/**
-			 * Check in all 8 directions
-			 */
+			/** Fills the fields lying between an existing field with the same color, IF it exists. This case checks for fields in the North direction.	*/
 			if(checkNorth(field, color) >= 0) {
-				flipBetween(field, checkNorth(field, color));
-			}
-			if(checkNorthEast(field, color) >= 0) {
-				flipBetween(field, checkNorthEast(field, color));
-			}
-			if(checkEast(field, color) >= 0) {
-				flipBetween(field, checkEast(field, color));
-			}
-			if(checkSouthEast(field, color) >= 0) {
-				flipBetween(field, checkSouthEast(field, color));
-			}
-			if(checkSouth(field, color) >= 0) {
-				flipBetween(field, checkSouth(field, color));
-			}
-			if(checkSouthWest(field, color) >= 0) {
-				flipBetween(field, checkSouthWest(field, color));
-			}
-			if(checkWest(field, color) >= 0) {
-				flipBetween(field, checkWest(field, color));
-			}
-			if(checkNorthWest(field, color) >= 0) {
-				flipBetween(field, checkNorthWest(field, color));
+				int newField = checkNorth(field, color);
+				int tempField = field;
+				while(tempField != newField) {
+					tempField -= DIM;
+					setField(tempField, color);
+				}
 			}
 			
-		}
+			/** Fills the fields lying between an existing field with the same color, IF it exists. This case checks for fields in the NorthEast direction.	*/
+			if(checkNorthEast(field, color) >= 0) {
+				int newField = checkNorthEast(field, color);
+				int tempField = field;
+				while(tempField != newField) {
+					tempField -= (DIM - 1);
+					setField(tempField, color);
+				}
+			}
+
+			/** Fills the fields lying between an existing field with the same color, IF it exists. This case checks for fields in the East direction.	*/
+			if(checkEast(field, color) >= 0) {
+				int newField = checkEast(field, color);
+				int tempField = field;
+				while(tempField != newField) {
+					tempField += 1;
+					setField(tempField, color);
+				}
+			}
+
+			/** Fills the fields lying between an existing field with the same color, IF it exists. This case checks for fields in the SouthEast direction.	*/
+			if(checkSouthEast(field, color) >= 0) {
+				int newField = checkSouthEast(field, color);
+				int tempField = field;
+				while(tempField != newField) {
+					tempField += (DIM + 1);
+					setField(tempField, color);
+				}
+			}
+
+			/** Fills the fields lying between an existing field with the same color, IF it exists. This case checks for fields in the South direction.	*/
+			if(checkSouth(field, color) >= 0) {
+				int newField = checkSouth(field, color);
+				int tempField = field;
+				while(tempField != newField) {
+					tempField += DIM;
+					setField(tempField, color);
+				}
+			}
+
+			/** Fills the fields lying between an existing field with the same color, IF it exists. This case checks for fields in the SouthWest direction.	*/
+			if(checkSouthWest(field, color) >= 0) {
+				int newField = checkSouthWest(field, color);
+				int tempField = field;
+				while(tempField != newField) {
+					tempField += (DIM -1);
+					setField(tempField, color);
+				}
+			}
+
+			/** Fills the fields lying between an existing field with the same color, IF it exists. This case checks for fields in the West direction.	*/
+			if(checkWest(field, color) >= 0) {
+				int newField = checkWest(field, color);
+				int tempField = field;
+				while(tempField != newField) {
+					tempField -= 1;
+					setField(tempField, color);
+				}
+			}
+
+			/** Fills the fields lying between an existing field with the same color, IF it exists. This case checks for fields in the NorthWest direction.	*/
+			if(checkNorthWest(field, color) >= 0) {
+				int newField = checkNorthWest(field, color);
+				int tempField = field;
+				while(tempField != newField) {
+					tempField -= (DIM + 1);
+					setField(tempField, color);
+				}
+			}
+			
+		} 
 		
 	}
 
@@ -230,58 +296,178 @@ public class Board extends Observable {
 			if(getField(i) == color) {
 				count++;
 			}
-		}
+		} 
 		return count;
 	}
 
-	private void flipBetween(int field, int checkNorth) {
-		// TODO Auto-generated method stub
-		// Dit gaat nog even lastig worden.
-		
+	/**
+	 * Returns true if a move is valid i.e. it lies next to another (yet occupied) field.
+	 * @param field to check available options
+	 * @param color to check the fields for
+	 * @return <code>true</code> if the checked field lies bordering to a field that <code>!Color.NONE</code>
+	 */
+	public boolean checkMove(int field, Color color) {
+		if(isEmptyField(field) &&
+			checkBorder(field) && (
+			checkNorth(field, color) >= 0 ||
+			checkNorthEast(field, color) >= 0 ||
+			checkEast(field, color) >= 0 ||
+			checkSouthEast(field, color) >= 0 ||
+			checkSouth(field, color) >= 0 ||
+			checkSouthWest(field, color) >= 0 ||
+			checkWest(field, color) >= 0 ||
+			checkNorthWest(field, color) >= 0)) {
+			return true;
+		}
+		return false;
 	}
 
-	private boolean checkMove(int field, Color color) {
+	private boolean checkBorder(int field) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
+	/**
+	 * Recursively finds, for the <b>North</b> direction, the first field that has the same <code>Color</code> as the new desired <code>Color</code>. This works, because it doesn't need to find more fields with the same <code>Color</code> in that direction.
+	 * @param field to start from
+	 * @param color that has to be found
+	 * @return <code>int</code> with the first field that meets the condition (same <code>Color</code> as the desired <code>Color</code>), <br><code>-1</code> if there is no such field.
+	 */
 	private int checkNorth(int field, Color color) {
-		// TODO Auto-generated method stub
-		return 0;
+		int north = field - DIM;
+		
+		while(getField(north) != Color.NONE && !(north < 0)) {
+			if (getField(north) == color) {
+				return north;
+			}
+			return checkNorth(north, color);
+		}
+		return -1;
 	}
 
+	/**
+	 * Recursively finds, for the <b>NorthEast</b> direction, the first field that has the same <code>Color</code> as the new desired <code>Color</code>. This works, because it doesn't need to find more fields with the same <code>Color</code> in that direction.
+	 * @param field to start from
+	 * @param color that has to be found
+	 * @return <code>int</code> with the first field that meets the condition (same <code>Color</code> as the desired <code>Color</code>), <br><code>-1</code> if there is no such field.
+	 */
 	private int checkNorthEast(int field, Color color) {
-		// TODO Auto-generated method stub
-		return 0;
+		int northeast = field - DIM + 1;
+		
+		while(getField(northeast) != Color.NONE && !(northeast < 0) && (northeast % DIM != 0)) {
+			if (getField(northeast) == color) {
+				return northeast;
+			}
+			return checkNorthEast(northeast, color);
+		}
+		return -1;
 	}
 
+	/**
+	 * Recursively finds, for the <b>East</b> direction, the first field that has the same <code>Color</code> as the new desired <code>Color</code>. This works, because it doesn't need to find more fields with the same <code>Color</code> in that direction.
+	 * @param field to start from
+	 * @param color that has to be found
+	 * @return <code>int</code> with the first field that meets the condition (same <code>Color</code> as the desired <code>Color</code>), <br><code>-1</code> if there is no such field.
+	 */
 	private int checkEast(int field, Color color) {
-		// TODO Auto-generated method stub
-		return 0;
+		int east = field + 1;
+		
+		while(getField(east) != Color.NONE && (east % DIM != 0)) {
+			if (getField(east) == color) {
+				return east;
+			}
+			return checkEast(east, color);
+		}
+		return -1;
 	}
 	
+	/**
+	 * Recursively finds, for the <b>SouthEast</b> direction, the first field that has the same <code>Color</code> as the new desired <code>Color</code>. This works, because it doesn't need to find more fields with the same <code>Color</code> in that direction.
+	 * @param field to start from
+	 * @param color that has to be found
+	 * @return <code>int</code> with the first field that meets the condition (same <code>Color</code> as the desired <code>Color</code>), <br><code>-1</code> if there is no such field.
+	 */
 	private int checkSouthEast(int field, Color color) {
-		// TODO Auto-generated method stub
-		return 0;
+		int southEast = field + DIM + 1;
+		
+		while(getField(southEast) != Color.NONE && (southEast % DIM != 0) && (southEast < (DIM * DIM))) {
+			if (getField(southEast) == color) {
+				return southEast;
+			}
+			return checkSouthEast(southEast, color);
+		}
+		return -1;
 	}
 
+	/**
+	 * Recursively finds, for the <b>South</b> direction, the first field that has the same <code>Color</code> as the new desired <code>Color</code>. This works, because it doesn't need to find more fields with the same <code>Color</code> in that direction.
+	 * @param field to start from
+	 * @param color that has to be found
+	 * @return <code>int</code> with the first field that meets the condition (same <code>Color</code> as the desired <code>Color</code>), <br><code>-1</code> if there is no such field.
+	 */
 	private int checkSouth(int field, Color color) {
-		// TODO Auto-generated method stub
-		return 0;
+		int south = field + DIM;
+		
+		while(getField(south) != Color.NONE && !(south >= (DIM * DIM))) {
+			if (getField(south) == color) {
+				return south;
+			}
+			return checkSouth(south, color);
+		}
+		return -1;
 	}
 	
+	/**
+	 * Recursively finds, for the <b>SouthWest</b> direction, the first field that has the same <code>Color</code> as the new desired <code>Color</code>. This works, because it doesn't need to find more fields with the same <code>Color</code> in that direction.
+	 * @param field to start from
+	 * @param color that has to be found
+	 * @return <code>int</code> with the first field that meets the condition (same <code>Color</code> as the desired <code>Color</code>), <br><code>-1</code> if there is no such field.
+	 */
 	private int checkSouthWest(int field, Color color) {
-		// TODO Auto-generated method stub
-		return 0;
+		int southwest = field + DIM - 1;
+		
+		while(getField(southwest) != Color.NONE && !(southwest >= (DIM * DIM)) && (((southwest + 1) % DIM) != 0)) {
+			if (getField(southwest) == color) {
+				return southwest;
+			}
+			return checkSouthWest(southwest, color);
+		}
+		return -1;
 	}
 	
+	/**
+	 * Recursively finds, for the <b>West</b> direction, the first field that has the same <code>Color</code> as the new desired <code>Color</code>. This works, because it doesn't need to find more fields with the same <code>Color</code> in that direction.
+	 * @param field to start from
+	 * @param color that has to be found
+	 * @return <code>int</code> with the first field that meets the condition (same <code>Color</code> as the desired <code>Color</code>), <br><code>-1</code> if there is no such field.
+	 */
 	private int checkWest(int field, Color color) {
-		// TODO Auto-generated method stub
-		return 0;
+		int west = field - 1;
+		
+		while(getField(west) != Color.NONE && (((west + 1) % DIM) != 0)) {
+			if (getField(west) == color) {
+				return west;
+			}
+			return checkWest(west, color);
+		}
+		return -1;
 	}
 	
+	/**
+	 * Recursively finds, for the <b>NorthWest</b> direction, the first field that has the same <code>Color</code> as the new desired <code>Color</code>. This works, because it doesn't need to find more fields with the same <code>Color</code> in that direction.
+	 * @param field to start from
+	 * @param color that has to be found
+	 * @return <code>int</code> with the first field that meets the condition (same <code>Color</code> as the desired <code>Color</code>), <br><code>-1</code> if there is no such field.
+	 */
 	private int checkNorthWest(int field, Color color) {
-		// TODO Auto-generated method stub
-		return 0;
+		int northWest = field - DIM - 1;
+		
+		while(getField(northWest) != Color.NONE && (((northWest + 1) % DIM) != 0) && !(northWest < 0)) {
+			if (getField(northWest) == color) {
+				return northWest;
+			}
+			return checkNorthWest(northWest, color);
+		}
+		return -1;
 	}
 }

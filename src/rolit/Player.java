@@ -13,7 +13,7 @@ public abstract class Player {
     private boolean takesPart;
     
     /**
-     * Creates a new Player object and defines the name.
+     * Constructs a new Player object and defines the name.
      */
     public Player(String theName) {
         this.name = theName;
@@ -21,7 +21,7 @@ public abstract class Player {
     
     /**
      * Sets the color of <code>this</code> player object.
-     * @param theColor of type Color.VALUE
+     * @param theColor of type <code>Color</code>
      */
     public void setColor (Color theColor) {
     	this.color = theColor;
@@ -42,6 +42,10 @@ public abstract class Player {
         return color;
     }
     
+    /**
+     * Returns boolean derived from <code>takesPart</code>
+     * @return <code>true</code> if <code>takesPart</code> is true
+     */
     public boolean isTakingPart() {
     	return takesPart;
     }

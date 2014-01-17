@@ -14,7 +14,6 @@ public class HumanPlayer extends Player {
 	}
 
 	public int determineMove(Board board) {
-		// TODO Auto-generated method stub;
 		return 0;
 	}
 

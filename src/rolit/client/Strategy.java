@@ -12,10 +12,10 @@ public interface Strategy {
 	public String getName();
 	
 	/**
-	 * 
+	 * Determine move according to the strategy algorithm.
 	 * @param b Board
 	 * @param c Color
-	 * @return next legal move
+	 * @return <code>int</code> with the index of the next move
 	 */
 	public int determineMove(Board b, Color c);
 }

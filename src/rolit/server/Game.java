@@ -37,10 +37,11 @@ public class Game {
 	// --------- CONSTRUCTORS ------
 
 	/**
-	 * Creates a new Game from the players array.
+	 * Creates a new Game from the <code>players</code> array.
 	 */
 	public Game(Player[] players) {
 		board = new Board();
+	
 		this.players = players;
 		currentPlayer = randomPlayer();
 	}
