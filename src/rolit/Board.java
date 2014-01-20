@@ -1,5 +1,7 @@
 package rolit;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Observable;
 
 /**
@@ -117,14 +119,6 @@ public class Board extends Observable {
 		setField(index(row, col), color);
 	}
 	
-	/**
-	 * Return the last changed field
-	 * @return <code>int</code> index of last changed field.
-	 */
-	public int getlastChangedField() {
-		return lastChangedField;
-	}
-
 	/**
 	 * Check if game is over
 	 * @return <code>true</code> if <code>isFull()</code> returns <code>true</code>
@@ -263,6 +257,44 @@ public class Board extends Observable {
 	}
 
 	/**
+	 * Returns true if a move is valid i.e. it lies next to another (yet occupied) field.
+	 * @param field to check available options
+	 * @param color to check the fields for
+	 * @return <code>true</code> if the checked field lies bordering to a field that <code>!Color.NONE</code>
+	 */
+	public boolean checkMove(int field, Color color) {
+		
+		if(isEmptyField(field) && isBordering(field, color)) {
+			System.out.println(hasFlippableField(color));
+			if(getFlippableFields(color)[field]) {
+				return true;
+			} else if (hasFlippableField(color)) {
+				return false;
+			} else {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Checkt of het veld naast een ander veld ligt
+	 * @param field
+	 * @param color
+	 * @return
+	 */
+	private boolean isBordering(int field, Color color) {
+		return (checkNorth(field, color) >= 0 ||
+				checkNorthEast(field, color) >= 0 ||
+				checkEast(field, color) >= 0 ||
+				checkSouthEast(field, color) >= 0 ||
+				checkSouth(field, color) >= 0 ||
+				checkSouthWest(field, color) >= 0 ||
+				checkWest(field, color) >= 0 ||
+				checkNorthWest(field, color) >= 0);
+	}
+
+	/**
 	 * Returns if the color has the most fields on the <code>Board</code>
 	 * @param color
 	 * @return boolean if the color has the most fields
@@ -300,33 +332,43 @@ public class Board extends Observable {
 		return count;
 	}
 
-	/**
-	 * Returns true if a move is valid i.e. it lies next to another (yet occupied) field.
-	 * @param field to check available options
-	 * @param color to check the fields for
-	 * @return <code>true</code> if the checked field lies bordering to a field that <code>!Color.NONE</code>
-	 */
-	public boolean checkMove(int field, Color color) {
-		if(isEmptyField(field) &&
-			checkBorder(field) && (
-			checkNorth(field, color) >= 0 ||
-			checkNorthEast(field, color) >= 0 ||
-			checkEast(field, color) >= 0 ||
-			checkSouthEast(field, color) >= 0 ||
-			checkSouth(field, color) >= 0 ||
-			checkSouthWest(field, color) >= 0 ||
-			checkWest(field, color) >= 0 ||
-			checkNorthWest(field, color) >= 0)) {
-			return true;
+	
+	
+					
+	public boolean[] getFlippableFields(Color color) {
+		
+		boolean[] flippableFields = new boolean[64];
+		
+		for (int i = 0; i < fields.length; i++) {
+			if (isEmptyField(i) && isBordering(i, color) && 
+					(
+						(i - checkNorth(i, color) >= DIM*2) && (checkNorth(i,color) >= 0) ||
+						(i - checkNorthEast(i, color) >= DIM * 2-2) && (checkNorth(i,color) >= 0)||
+						(checkEast(i, color) - i >= 2) /*&& (checkEast(i,color) >= 0)*/ ||
+						(checkSouthEast(i, color) - i >= 18) /*&& (checkSouthEast(i,color) >= 0)*/ ||
+						(checkSouth(i, color) - i >= 16) /*&& (checkSouth(i,color) >= 0)*/ ||
+						(checkSouthWest(i, color) - i >= 14) /*&& (checkSouthWest(i,color) >= 0)*/ ||
+						((i - checkWest(i, color) >= 2) && (checkWest(i, color) >= 0)) ||
+						((i - checkNorthWest(i, color) >= 18) && (checkNorthWest(i, color) >= 0)))
+					) {
+				flippableFields[i] = true;
+				System.out.print(i + ", ");
+				
+			}
+		}
+	    System.out.println();
+		return flippableFields;
+	}
+
+	private boolean hasFlippableField(Color c) {
+		for(int i = 0; i < fields.length; i++) {
+			if (getFlippableFields(c)[i]) {
+				return true;
+			}
 		}
 		return false;
 	}
-
-	private boolean checkBorder(int field) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
+	
 	/**
 	 * Recursively finds, for the <b>North</b> direction, the first field that has the same <code>Color</code> as the new desired <code>Color</code>. This works, because it doesn't need to find more fields with the same <code>Color</code> in that direction.
 	 * @param field to start from
@@ -336,7 +378,7 @@ public class Board extends Observable {
 	private int checkNorth(int field, Color color) {
 		int north = field - DIM;
 		
-		while(getField(north) != Color.NONE && !(north < 0)) {
+		while(onBoard(north) && getField(north) != Color.NONE) {
 			if (getField(north) == color) {
 				return north;
 			}
@@ -354,7 +396,7 @@ public class Board extends Observable {
 	private int checkNorthEast(int field, Color color) {
 		int northeast = field - DIM + 1;
 		
-		while(getField(northeast) != Color.NONE && !(northeast < 0) && (northeast % DIM != 0)) {
+		while(onBoard(northeast) && getField(northeast) != Color.NONE && (northeast % DIM != 0)) {
 			if (getField(northeast) == color) {
 				return northeast;
 			}
@@ -372,7 +414,7 @@ public class Board extends Observable {
 	private int checkEast(int field, Color color) {
 		int east = field + 1;
 		
-		while(getField(east) != Color.NONE && (east % DIM != 0)) {
+		while(onBoard(east) && getField(east) != Color.NONE && (east % DIM != 0)) {
 			if (getField(east) == color) {
 				return east;
 			}
@@ -390,7 +432,7 @@ public class Board extends Observable {
 	private int checkSouthEast(int field, Color color) {
 		int southEast = field + DIM + 1;
 		
-		while(getField(southEast) != Color.NONE && (southEast % DIM != 0) && (southEast < (DIM * DIM))) {
+		while(onBoard(southEast) && getField(southEast) != Color.NONE && (southEast % DIM != 0)) {
 			if (getField(southEast) == color) {
 				return southEast;
 			}
@@ -408,7 +450,7 @@ public class Board extends Observable {
 	private int checkSouth(int field, Color color) {
 		int south = field + DIM;
 		
-		while(getField(south) != Color.NONE && !(south >= (DIM * DIM))) {
+		while(onBoard(south) && getField(south) != Color.NONE) {
 			if (getField(south) == color) {
 				return south;
 			}
@@ -426,7 +468,7 @@ public class Board extends Observable {
 	private int checkSouthWest(int field, Color color) {
 		int southwest = field + DIM - 1;
 		
-		while(getField(southwest) != Color.NONE && !(southwest >= (DIM * DIM)) && (((southwest + 1) % DIM) != 0)) {
+		while(onBoard(southwest) && getField(southwest) != Color.NONE && (((southwest + 1) % DIM) != 0)) {
 			if (getField(southwest) == color) {
 				return southwest;
 			}
@@ -444,7 +486,7 @@ public class Board extends Observable {
 	private int checkWest(int field, Color color) {
 		int west = field - 1;
 		
-		while(getField(west) != Color.NONE && (((west + 1) % DIM) != 0)) {
+		while(onBoard(west) && getField(west) != Color.NONE && (((west + 1) % DIM) != 0)) {
 			if (getField(west) == color) {
 				return west;
 			}
@@ -462,12 +504,16 @@ public class Board extends Observable {
 	private int checkNorthWest(int field, Color color) {
 		int northWest = field - DIM - 1;
 		
-		while(getField(northWest) != Color.NONE && (((northWest + 1) % DIM) != 0) && !(northWest < 0)) {
+		while(onBoard(northWest) && getField(northWest) != Color.NONE && (((northWest + 1) % DIM) != 0)) {
 			if (getField(northWest) == color) {
 				return northWest;
 			}
 			return checkNorthWest(northWest, color);
 		}
 		return -1;
+	}
+
+	private boolean onBoard(int field) {
+		return field >= 0 && field < 64;
 	}
 }

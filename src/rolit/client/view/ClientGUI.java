@@ -1,6 +1,5 @@
 package rolit.client.view;
 
-import java.awt.Container;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -37,8 +36,7 @@ public class ClientGUI extends JFrame implements Observer, ActionListener {
 	// --------- METHODS -------
 	
 	private void init() {
-		Container c = getContentPane();
-		c.setLayout(new GridBagLayout());
+		setLayout(new GridBagLayout());
 		GridBagConstraints gbc = new GridBagConstraints();
 
 		setSize(600, 300);
@@ -62,6 +60,7 @@ public class ClientGUI extends JFrame implements Observer, ActionListener {
 	@Override
 	public void update(Observable model, Object arg) {
 		Board board = (Board) model;
+		System.out.println("UPDATE CLIENTGUI");
 		for(int i = 0; i < Board.DIM * Board.DIM; i++) {
 			fields[i].setText(board.getField(i).toString());
 			

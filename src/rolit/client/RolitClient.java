@@ -1,6 +1,7 @@
 package rolit.client;
 
 import rolit.Board;
+import rolit.client.controller.ClientController;
 import rolit.client.view.ClientGUI;
 
 public class RolitClient {
@@ -10,8 +11,9 @@ public class RolitClient {
 	 */
 	public static void main(String[] args) {
 		
-		Board board = new Board();
-		ClientGUI client = new ClientGUI(board);
+		Board board = new Board(); // MODEL
+		ClientGUI client = new ClientGUI(board); // VIEW
+		ClientController c = new ClientController(client); // CONTROLLER
 		
 		
 	}
