@@ -22,5 +22,35 @@ public enum Color {
 			return NONE;
 		}
 	}
+	
+	public int toInt() {
+		switch(this) {
+		case RED:
+			return 0;
+		case YELLOW:
+			return 1;
+		case GREEN:
+			return 2;
+		case BLUE:
+			return 3;
+		default:
+			return -1;
+		}
+	}
+	
+	public java.awt.Color toColor() {
+		switch(this) {
+		case RED:
+			return java.awt.Color.RED;
+		case YELLOW:
+			return java.awt.Color.YELLOW;
+		case GREEN:
+			return java.awt.Color.GREEN;
+		case BLUE:
+			return java.awt.Color.BLUE;
+		default:
+			return java.awt.Color.WHITE;
+		}
+	}
 
 }

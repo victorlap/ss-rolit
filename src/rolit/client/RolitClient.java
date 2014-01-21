@@ -7,14 +7,22 @@ import rolit.client.view.ClientGUI;
 public class RolitClient {
 	
 	/**
-	 * Test method
+	 * Method to run the client side of Rolit
 	 */
 	public static void main(String[] args) {
 		
 		Board board = new Board(); // MODEL
-		ClientGUI client = new ClientGUI(board); // VIEW
-		ClientController c = new ClientController(client); // CONTROLLER
+		ClientGUI view = new ClientGUI(); // VIEW
 		
+		board.addObserver(view);
+		
+		ClientController cc = new ClientController(); // CONTROLLER
+		cc.addModel(board);
+		cc.addView(view);
+		
+		view.addController(cc);
+		
+		cc.init();
 		
 	}
 
