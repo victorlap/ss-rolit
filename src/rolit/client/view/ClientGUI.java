@@ -10,7 +10,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import rolit.Board;
 import rolit.Color;
-import rolit.client.controller.ClientController;
+import rolit.client.ClientController;
 
 public class ClientGUI extends JFrame implements Observer, GUI {
 	
@@ -23,11 +23,14 @@ public class ClientGUI extends JFrame implements Observer, GUI {
 	public Color current = Color.RED;
 	
 	public JButton[] fields = new JButton[Board.DIM * Board.DIM];
+	public JButton hint = new JButton();
 	
 	public JLabel jtext = new JLabel();
+	public JLabel scores = new JLabel();
 
 	// -------- CONSTRUCTORS --------
 	public ClientGUI() {
+		
 		setLayout(new GridBagLayout());
 		GridBagConstraints gbc = new GridBagConstraints();
 
@@ -37,13 +40,22 @@ public class ClientGUI extends JFrame implements Observer, GUI {
 		gbc.weighty = 1;
 		//gbc.gridx = Board.DIM;
 		gbc.gridy = Board.DIM;
-		gbc.gridwidth = Board.DIM;
+		gbc.gridwidth = (Board.DIM -2) / 2;
+		
 		jtext.setText(current.toString());
 		add(jtext, gbc);
 		
+		scores.setText("");
+		add(scores, gbc);
+		
+		gbc.gridx = Board.DIM-2;
+		gbc.gridwidth = 2;
+		hint.setText("Get Hint");
+		add(hint, gbc);
+		
 		for(int i = 0; i < fields.length; i++) {
 			fields[i] = new JButton();
-			//fields[i].setText(Color.NONE.toString());
+			//fields[i].setText(new Integer(i).toString());
 			fields[i].setActionCommand(new Integer(i).toString());
 			gbc.gridx = (i % Board.DIM);
 			gbc.gridy = (i / Board.DIM);
@@ -54,11 +66,9 @@ public class ClientGUI extends JFrame implements Observer, GUI {
 			add(fields[i], gbc);
 		}
 		
-		
-		
-		
 		setVisible(true);
 	}
+	
 	
 	// --------- METHODS -------
 
@@ -83,6 +93,7 @@ public class ClientGUI extends JFrame implements Observer, GUI {
 		for(int i=0; i < Board.DIM * Board.DIM; i++) {
 			fields[i].addActionListener(controller);
 		}
+		hint.addActionListener(controller);
 	}
 
 	

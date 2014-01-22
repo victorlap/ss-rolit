@@ -25,7 +25,15 @@ public class RandomStrategy implements Strategy {
 			}
 		}
 		
-		return (int) (Math.random() * validMoves.size());
+		if(validMoves.isEmpty()) {
+			for (int i = 0; i < Board.DIM * Board.DIM; i++) {
+				if(b.isEmptyField(i) && b.isBordering(i)) {
+					validMoves.add(i);
+				}
+			}
+		}
+		
+		return validMoves.get((int) (Math.random() * validMoves.size()));
 	}
 
 }

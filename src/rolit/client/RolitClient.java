@@ -1,7 +1,6 @@
 package rolit.client;
 
 import rolit.Board;
-import rolit.client.controller.ClientController;
 import rolit.client.view.ClientGUI;
 
 public class RolitClient {

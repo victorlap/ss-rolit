@@ -1,16 +1,16 @@
 package rolit;
 
+import java.util.Arrays;
 import java.util.Observable;
 
 import rolit.client.ComputerPlayer;
-import rolit.client.RandomStrategy;
-import rolit.client.Strategy;
+import rolit.client.SmartStrategy;
 
 /**
  * Class that initializes, maintains and analyzes the board of the RolIt game.
  * 
  * @author Victor Lap and Yuri van Midden
- * @version 1.5.0
+ * @version 1.6.0
  */
 
 public class Board extends Observable {
@@ -323,7 +323,7 @@ public class Board extends Observable {
 	 * @return <code>int</code> with the hint index
 	 */
 	public int getHint(Color color) {
-		ComputerPlayer cp = new ComputerPlayer(color);
+		ComputerPlayer cp = new ComputerPlayer(color, new SmartStrategy());
 		return cp.determineMove(this);
 		
 	}
@@ -333,7 +333,7 @@ public class Board extends Observable {
 	 * @param field to check
 	 * @return <code>true</code> if field lies next to another field with <br><code>!Color.NONE</code>
 	 */
-	private boolean isBordering(int field) {
+	public boolean isBordering(int field) {
 		return ((checkNorth(field, Color.RED) >= 0 ||
 				checkNorthEast(field, Color.RED) >= 0 ||
 				checkEast(field, Color.RED) >= 0 ||
@@ -398,7 +398,7 @@ public class Board extends Observable {
 	 * @param color to test
 	 * @return <code>int</code> with the amount of fields a player has
 	 */
-	private int countFields(Color color) {
+	public int countFields(Color color) {
 		int count = 0;
 		
 		for(int i = 0; i < fields.length; i++) {
@@ -408,8 +408,6 @@ public class Board extends Observable {
 		} 
 		return count;
 	}
-
-	
 	
 	/**
 	 * Creates an array of booleans with the fields that would flip other's fields if picked.				
@@ -468,30 +466,39 @@ public class Board extends Observable {
 	/**
 	 * Calculate the quality of every field, i.e. calculate the amount of flips that every move will generate.
 	 * @param color to test qualities for
-	 * @return <code>int[]</code> 
+	 * @return <code>int[]</code> with the amounts of fields that every move flips.
 	 */
 	public int[] getQuality(Color color) {
+		
 		int[] qualityFields = new int[DIM * DIM];
-		int quality;
 		boolean[] tempFlippableFields = this.getFlippableFields(color);
 		
 		for (int i = 0; i < qualityFields.length; i++) {
+			/*if(i == 43) {
+			System.out.println(((checkNorth(i, color) >= 0) 		? ((i - checkNorth(i, color)) / DIM)				: 0));
+			System.out.println(((checkNorthEast(i, color) >= 0) 	? (i - checkNorthEast(i, color) / (DIM - 1)) 	: 0));
+			System.out.println(((checkEast(i, color) >= 0) 		? (checkEast(i, color) - i)						: 0));
+			System.out.println(((checkSouthEast(i, color) >= 0)	? (checkSouthEast(i, color) - i / (DIM + 1)) 	: 0));
+			System.out.println(((checkSouth(i, color) >= 0)		? (checkSouth(i, color) - i / DIM)				: 0));
+			System.out.println((checkSouthWest(i, color) >= 0)    ? (checkSouthWest(i, color) - i / (DIM - 1))    : 0);
+			System.out.println((checkWest(i, color) >= 0)         ? (i - checkWest(i, color))                     : 0);
+			System.out.println((checkNorthWest(i, color) >= 0)    ? (i - checkNorthWest(i, color) / (DIM + 1))    : 0);
+		}*/
 			if (tempFlippableFields[i]) {
-				quality = 0;
-				quality = quality + 
-					(i - checkNorth(i, color) / DIM) +
-					(i - checkNorthEast(i, color) / (DIM - 1)) +
-					(checkEast(i, color) - i) +
-					(checkSouthEast(i, color) - i / (DIM + 1)) +
-					(checkSouth(i, color) - i / DIM) +
-					(checkSouthWest(i, color) - i / (DIM - 1)) +
-					(i - checkWest(i, color)) +
-					(i - checkNorthWest(i, color) / (DIM + 1));
-				qualityFields[i] = quality;
+				qualityFields[i] = 
+					((checkNorth(i, color) >= 0) 		? ((i - checkNorth(i, color)) / DIM) 			: 0) +
+					((checkNorthEast(i, color) >= 0) 	? ((i - checkNorthEast(i, color)) / (DIM - 1)) 	: 0) +
+					((checkEast(i, color) >= 0) 		? (checkEast(i, color) - i)						: 0) +
+					((checkSouthEast(i, color) >= 0)	? ((checkSouthEast(i, color) - i) / (DIM + 1)) 	: 0) +
+					((checkSouth(i, color) >= 0)		? ((checkSouth(i, color) - i) / DIM)			: 0) +
+					((checkSouthWest(i, color) >= 0)    ? ((checkSouthWest(i, color) - i) / (DIM - 1))  : 0) +
+					((checkWest(i, color) >= 0)         ? (i - checkWest(i, color))                     : 0) +
+					((checkNorthWest(i, color) >= 0)    ? ((i - checkNorthWest(i, color)) / (DIM + 1))  : 0);
 			} else {
 				qualityFields[i] = 0;
 			}
 		}
+		//System.out.println(Arrays.toString(qualityFields));
 		return qualityFields;
 	}
 	
