@@ -1,5 +1,7 @@
 package rolit.server;
 
+import rolit.server.view.ServerGUI;
+
 
 /**
  * Deze klasse regelt de inkomende connecties en laat spelers samen in een game
@@ -30,4 +32,8 @@ public class RolitServer {
 			Socket socket = serverSocket.accept();
 		}
 	}*/
+	
+	public static void main (String[] args) {
+		new ServerGUI("192.168.2.1", "1337");
+	}
 }

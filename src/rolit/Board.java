@@ -2,6 +2,10 @@ package rolit;
 
 import java.util.Observable;
 
+import rolit.client.ComputerPlayer;
+import rolit.client.RandomStrategy;
+import rolit.client.Strategy;
+
 /**
  * Class that initializes, maintains and analyzes the board of the RolIt game.
  * 
@@ -11,7 +15,7 @@ import java.util.Observable;
 
 public class Board extends Observable {
 
-	public static final int DIM = 8; // MUST BE EVEN AND >2
+	public static final int DIM = 8; // MUST BE EVEN AND 2-26
 	public int lastChangedField;
 
 	/**
@@ -314,6 +318,17 @@ public class Board extends Observable {
 	}
 	
 	/**
+	 * Returns a hint derived from the strategy used.
+	 * @param color to find a hint for
+	 * @return <code>int</code> with the hint index
+	 */
+	public int getHint(Color color) {
+		ComputerPlayer cp = new ComputerPlayer(color);
+		return cp.determineMove(this);
+		
+	}
+	
+	/**
 	 * Check if the chosen field lies next to a colored field, by testing the conditions for every color.
 	 * @param field to check
 	 * @return <code>true</code> if field lies next to another field with <br><code>!Color.NONE</code>
@@ -448,6 +463,36 @@ public class Board extends Observable {
 			}
 		}
 		return false;
+	}
+	
+	/**
+	 * Calculate the quality of every field, i.e. calculate the amount of flips that every move will generate.
+	 * @param color to test qualities for
+	 * @return <code>int[]</code> 
+	 */
+	public int[] getQuality(Color color) {
+		int[] qualityFields = new int[DIM * DIM];
+		int quality;
+		boolean[] tempFlippableFields = this.getFlippableFields(color);
+		
+		for (int i = 0; i < qualityFields.length; i++) {
+			if (tempFlippableFields[i]) {
+				quality = 0;
+				quality = quality + 
+					(i - checkNorth(i, color) / DIM) +
+					(i - checkNorthEast(i, color) / (DIM - 1)) +
+					(checkEast(i, color) - i) +
+					(checkSouthEast(i, color) - i / (DIM + 1)) +
+					(checkSouth(i, color) - i / DIM) +
+					(checkSouthWest(i, color) - i / (DIM - 1)) +
+					(i - checkWest(i, color)) +
+					(i - checkNorthWest(i, color) / (DIM + 1));
+				qualityFields[i] = quality;
+			} else {
+				qualityFields[i] = 0;
+			}
+		}
+		return qualityFields;
 	}
 	
 	/**

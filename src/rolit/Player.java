@@ -1,5 +1,7 @@
 package rolit;
 
+import rolit.client.Strategy;
+
 /**
  * Initializes and maintains a player object, with its attached properties
  * @author Yuri van Midden and Victor Lap
@@ -10,13 +12,20 @@ public abstract class Player {
 	
 	private String name;
     private Color color;
+    public Strategy strategy;
     private boolean takesPart;
     
     /**
      * Constructs a new Player object and defines the name.
+     * @param theColor 
      */
-    public Player(String theName) {
+    public Player(String theName, Color theColor) {
         this.name = theName;
+        this.color = theColor;
+    }
+    
+    public Player(String theName) {
+    	this.name = theName;
     }
     
     /**

@@ -2,19 +2,35 @@ package rolit.client;
 
 import rolit.Board;
 import rolit.Color;
+import rolit.Player;
+import rolit.client.RandomStrategy;
+import rolit.client.Strategy;
 
-public class ComputerPlayer implements Strategy {
+public class ComputerPlayer extends Player {
 
-	@Override
-	public String getName() {
-		// TODO Auto-generated method stub
-		return null;
+	public ComputerPlayer(Color theColor, Strategy strategy) {
+		super(strategy.getName()+"-"+theColor, theColor);
+		this.strategy = strategy;
+	}
+	
+	public ComputerPlayer(Color theColor) {
+		super("Naive", theColor);
+		this.strategy = new RandomStrategy();
 	}
 
 	@Override
-	public int determineMove(Board b, Color c) {
-		// TODO Auto-generated method stub
-		return 0;
+	public int determineMove(Board board) {
+		return strategy.determineMove(board, getColor());
 	}
+	
+	public Strategy getStrategy() {
+		return strategy;
+	}
+	
+	public void updateStrategy(Strategy strategy) {
+		this.strategy = strategy;
+	}
+
+	
 
 }

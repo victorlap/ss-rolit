@@ -7,8 +7,7 @@ import java.util.Observer;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JTextField;
-
+import javax.swing.JLabel;
 import rolit.Board;
 import rolit.Color;
 import rolit.client.controller.ClientController;
@@ -25,7 +24,7 @@ public class ClientGUI extends JFrame implements Observer, GUI {
 	
 	public JButton[] fields = new JButton[Board.DIM * Board.DIM];
 	
-	public JTextField jtext = new JTextField();
+	public JLabel jtext = new JLabel();
 
 	// -------- CONSTRUCTORS --------
 	public ClientGUI() {
@@ -36,8 +35,9 @@ public class ClientGUI extends JFrame implements Observer, GUI {
 		
 		gbc.weightx = 1;
 		gbc.weighty = 1;
-		gbc.gridx = Board.DIM;
-		//gbc.gridy = Board.DIM +1;
+		//gbc.gridx = Board.DIM;
+		gbc.gridy = Board.DIM;
+		gbc.gridwidth = Board.DIM;
 		jtext.setText(current.toString());
 		add(jtext, gbc);
 		
@@ -49,6 +49,7 @@ public class ClientGUI extends JFrame implements Observer, GUI {
 			gbc.gridy = (i / Board.DIM);
 			gbc.weightx = 1;
 			gbc.weighty = 1;
+			gbc.gridwidth = 1;
 			gbc.fill = GridBagConstraints.BOTH;
 			add(fields[i], gbc);
 		}
