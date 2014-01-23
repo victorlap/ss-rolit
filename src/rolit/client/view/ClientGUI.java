@@ -8,8 +8,10 @@ import java.util.Observer;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+
 import rolit.Board;
 import rolit.Color;
+import rolit.GUI;
 import rolit.client.ClientController;
 
 public class ClientGUI extends JFrame implements Observer, GUI {
@@ -94,6 +96,13 @@ public class ClientGUI extends JFrame implements Observer, GUI {
 			fields[i].addActionListener(controller);
 		}
 		hint.addActionListener(controller);
+	}
+
+
+	@Override
+	public void addMessage(String msg) {
+		jtext.setText(msg);
+		
 	}
 
 	

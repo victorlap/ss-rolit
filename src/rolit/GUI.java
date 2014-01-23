@@ -6,6 +6,6 @@ package rolit;
  * @author  Theo Ruys
  * @version 2005.02.21
  */
-public interface MessageUI {
+public interface GUI {
 	public void addMessage(String msg);
 }

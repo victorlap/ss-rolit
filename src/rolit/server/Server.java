@@ -1,16 +1,24 @@
 package rolit.server;
 
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Collection;
 
-import rolit.MessageUI;
+import rolit.GUI;
 
 public class Server extends Thread {
 	private int port;
-	private MessageUI mui;
+	private GUI mui;
+	private ServerSocket ss;
 	private Collection<ClientHandler> threads;
 
         /** Constructs a new Server object */
-	public Server(int portArg, MessageUI muiArg) {
+	public Server(int portArg, GUI muiArg) {
+		this.port = portArg;
+		this.mui = muiArg;
+		this.threads = new ArrayList<ClientHandler>();
 	}
 
 	/**
@@ -20,6 +28,23 @@ public class Server extends Thread {
          * communication with the Client. 
 	 */
 	public void run() {
+		try {
+			ss = new ServerSocket(port);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		while(true) {
+			try {
+				Socket newSocket = ss.accept();
+				ClientHandler newHandler = new ClientHandler(this, newSocket);
+				addHandler(newHandler);
+			} catch(IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}	
 	}
 
 	/**
@@ -28,6 +53,10 @@ public class Server extends Thread {
 	 * @param msg message that is send
 	 */
 	public void broadcast(String msg) {
+		mui.addMessage(msg);
+		for(ClientHandler handler : threads) {
+			handler.sendMessage(msg);
+		}
 	}
 
 	/**
@@ -35,6 +64,14 @@ public class Server extends Thread {
 	 * @param handler ClientHandler that will be added
 	 */
 	public void addHandler(ClientHandler handler) {
+		threads.add(handler);
+		try {
+			handler.start();
+			handler.announce();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -42,5 +79,6 @@ public class Server extends Thread {
 	 * @param handler ClientHandler that will be removed
 	 */
 	public void removeHandler(ClientHandler handler) {
+		threads.remove(handler);
 	}
 }

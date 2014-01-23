@@ -26,6 +26,10 @@ public class ClientHandler extends Thread {
 	 *@ requires server != null && sock != null;
 	 */
 	public ClientHandler(Server serverArg, Socket sockArg) throws IOException {
+		this.server = serverArg;
+		this.sock = sockArg;
+		in = new BufferedReader(new InputStreamReader(sock.getInputStream()));
+		out = new BufferedWriter(new OutputStreamWriter(sock.getOutputStream()));
 	}
 
 	/**
@@ -48,6 +52,15 @@ public class ClientHandler extends Thread {
          * broken and shutdown() will be called. 
 	 */
 	public void run() {
+		try {
+			while(true) {
+				String msg = "[" + this.clientName + "] " + in.readLine();
+				server.broadcast(msg);
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -57,6 +70,14 @@ public class ClientHandler extends Thread {
          * and shutdown() is called.
 	 */
 	public void sendMessage(String msg) {
+		try {
+			System.out.println("[NEW MSG] " + msg);
+			out.write(msg + "\n");
+			out.flush();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	/**

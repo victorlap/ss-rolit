@@ -1,5 +1,6 @@
 package rolit.server;
 
+import rolit.GUI;
 import rolit.server.view.ServerGUI;
 
 
@@ -14,6 +15,7 @@ import rolit.server.view.ServerGUI;
 public class RolitServer {
 
 	public static void main (String[] args) {
-		new ServerGUI();
+		GUI sgui = new ServerGUI();
+	
 	}
 }

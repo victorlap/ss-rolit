@@ -1,6 +1,5 @@
 package rolit;
 
-import java.util.Arrays;
 import java.util.Observable;
 
 import rolit.client.ComputerPlayer;
@@ -14,13 +13,14 @@ import rolit.client.SmartStrategy;
  */
 
 public class Board extends Observable {
-
-	public static final int DIM = 8; // MUST BE EVEN AND 2-26
+	
+	public static final int DIM = 8; // MUST BE EVEN AND >2
+	
 	public int lastChangedField;
 
 	/**
 	 * The DIM by DIM fields of the Tic Tac Toe board. See NUMBERING for the
-	 * coding of the fields.
+	 * coding of the fields.z
 	 */
 	private Color[] fields;
 
@@ -34,6 +34,9 @@ public class Board extends Observable {
 		}
 	} 
 	
+	/**
+	 * Sets the initial fields of the board
+	 */
 	public void init() {
 		setField((DIM/2)-1, (DIM/2)-1, Color.RED);
 		setField((DIM/2), (DIM/2)-1, Color.YELLOW);
@@ -61,6 +64,24 @@ public class Board extends Observable {
 	 */
 	public int index(int col, int row) {
 		return DIM * row + col;
+	}
+	
+	/**
+	 * Returns the column of a field at <code>index</code>
+	 * @param index
+	 * @return<code>int</code> of the col
+	 */
+	public int indexToCol(int index) {
+		return index % DIM;
+	}
+	
+	/**
+	 * Returns the row of a field at <code>index</code>
+	 * @param index
+	 * @return <code>int</code> of the row
+	 */
+	public int indexToRow(int index) {
+		return index / DIM;
 	}
 	
 	/**
