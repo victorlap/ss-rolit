@@ -85,9 +85,9 @@ public class ClientHandler extends Thread {
          * sends a last broadcast to the Server to inform that the Client
          * is no longer participating in the chat. 
 	 */
-	private void shutdown() {
+	/*private void shutdown() {
 		server.removeHandler(this);
 		server.broadcast("[" + clientName + " has left]");
-	}
+	}*/
 
 } // end of class ClientHandler

@@ -1,7 +1,7 @@
-package rolit.server;
+package rolit;
 
-import rolit.Board;
-import rolit.Player;
+import java.awt.Color;
+
 
 /**
  * Maintains game object i.e. let players make a move and assigning the current player's turn.
@@ -64,6 +64,11 @@ public class Game {
             players[currentPlayer].makeMove(board);
             currentPlayer = (currentPlayer + 1) % players.length;
         }
+	}
+
+	public void doMove(int field, Color color) {
+		// TODO Auto-generated method stub
+		
 	}
 
 

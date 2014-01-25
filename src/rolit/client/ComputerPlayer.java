@@ -17,6 +17,16 @@ public class ComputerPlayer extends Player {
 		super("Naive", theColor);
 		this.strategy = new RandomStrategy();
 	}
+	
+	public ComputerPlayer(String theName, Strategy strategy) {
+		super(theName);
+		this.strategy = strategy;
+	}
+	
+	public ComputerPlayer(String theName) {
+		super(theName);
+		this.strategy = new RandomStrategy();
+	}
 
 	@Override
 	public int determineMove(Board board) {

@@ -2,8 +2,6 @@ package rolit.client.view;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.util.Observable;
-import java.util.Observer;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -11,10 +9,9 @@ import javax.swing.JLabel;
 
 import rolit.Board;
 import rolit.Color;
-import rolit.GUI;
-import rolit.client.ClientController;
+import rolit.client.controller.ClientController;
 
-public class ClientGUI extends JFrame implements Observer, GUI {
+public class GameGUI extends JFrame {
 	
 	/**
 	 * Auto generated Serial Version UID
@@ -31,7 +28,7 @@ public class ClientGUI extends JFrame implements Observer, GUI {
 	public JLabel scores = new JLabel();
 
 	// -------- CONSTRUCTORS --------
-	public ClientGUI() {
+	public GameGUI(ClientController clientController) {
 		
 		setLayout(new GridBagLayout());
 		GridBagConstraints gbc = new GridBagConstraints();
@@ -71,23 +68,13 @@ public class ClientGUI extends JFrame implements Observer, GUI {
 		setVisible(true);
 	}
 	
-	
-	// --------- METHODS -------
-
-	@Override
-	public void update(Observable model, Object arg) {
-		Board board = (Board) model;
-		//System.out.println("UPDATE CLIENTGUI");
-		for(int i = 0; i < Board.DIM * Board.DIM; i++) {
-			//fields[i].setText(board.getField(i).toString());
-			fields[i].setBackground(board.getField(i).toColor());
-			if(board.getField(i) == Color.NONE) {
-				fields[i].setEnabled(true);
-			} else {
-				fields[i].setEnabled(false);
-			}
+	public void setField(int field, Color color) {
+		fields[field].setBackground(color.toColor());
+		if(color == Color.NONE) {
+			fields[field].setEnabled(true);
+		} else {
+			fields[field].setEnabled(false);
 		}
-		//repaint();
 	}
 	
 	public void addController(ClientController c) {
@@ -96,13 +83,6 @@ public class ClientGUI extends JFrame implements Observer, GUI {
 			fields[i].addActionListener(controller);
 		}
 		hint.addActionListener(controller);
-	}
-
-
-	@Override
-	public void addMessage(String msg) {
-		jtext.setText(msg);
-		
 	}
 
 	

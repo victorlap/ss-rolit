@@ -18,10 +18,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-import rolit.GUI;
-import rolit.server.Server;
-
-public class ServerGUI extends JFrame implements ActionListener, GUI {
+public class ServerGUI extends JFrame implements ActionListener {
 	
 	/**
 	 * Auto generated serialVersionUID
@@ -30,7 +27,7 @@ public class ServerGUI extends JFrame implements ActionListener, GUI {
 	private JButton bConnect;
 	private JTextField tfPort;
 	private JTextArea taMessages;
-	private Server server;
+//	private Server server;
 
 	/** Constructs a ServerGUI object. */
 	public ServerGUI() {
@@ -129,8 +126,8 @@ public class ServerGUI extends JFrame implements ActionListener, GUI {
 		tfPort.setEditable(false);
 		bConnect.setEnabled(false);
 
-		server = new Server(port, this);
-		server.start();
+//		server = new Server(port, this);
+//		server.start();
 
 		addMessage("Started listening on port " + port + "...");
 	}

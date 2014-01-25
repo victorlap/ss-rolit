@@ -6,18 +6,14 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import rolit.GUI;
-
 public class Server extends Thread {
 	private int port;
-	private GUI mui;
 	private ServerSocket ss;
 	private Collection<ClientHandler> threads;
 
         /** Constructs a new Server object */
-	public Server(int portArg, GUI muiArg) {
+	public Server(int portArg) {
 		this.port = portArg;
-		this.mui = muiArg;
 		this.threads = new ArrayList<ClientHandler>();
 	}
 
@@ -53,7 +49,6 @@ public class Server extends Thread {
 	 * @param msg message that is send
 	 */
 	public void broadcast(String msg) {
-		mui.addMessage(msg);
 		for(ClientHandler handler : threads) {
 			handler.sendMessage(msg);
 		}

@@ -28,16 +28,11 @@ public abstract class Player {
     	this.name = theName;
     }
     
-    /**
-     * Sets the color of <code>this</code> player object.
-     * @param theColor of type <code>Color</code>
-     */
-    public void setColor (Color theColor) {
-    	this.color = theColor;
-    	takesPart = true;
-    }
-    
-    /**
+    public void setName(String name) {
+		this.name = name;
+	}
+
+	/**
      * Returns the name of the player.
      */
     public String getName() {
@@ -45,7 +40,16 @@ public abstract class Player {
     }
 
     /**
-     * Returns the mark of the player.
+	 * Sets the color of <code>this</code> player object.
+	 * @param theColor of type <code>Color</code>
+	 */
+	public void setColor (Color theColor) {
+		this.color = theColor;
+		takesPart = true;
+	}
+
+	/**
+     * Returns the color of the player.
      */
     public Color getColor() {
         return color;
