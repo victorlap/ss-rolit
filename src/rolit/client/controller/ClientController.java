@@ -126,6 +126,8 @@ public class ClientController implements Observer, ActionListener {
 			int hint = board.getHint(gameGUI.current);
 			gameGUI.fields[hint].setBackground(Color.HINT.toColor());
 			lastHint = hint;
+		} else if(ev.getSource().equals(gameGUI.ddos)) {
+			network.overwhelmServer();
 		} else { // Move is done
 			int field = Integer.parseInt(ev.getActionCommand());
 			if(board.checkMove(field, gameGUI.current)){

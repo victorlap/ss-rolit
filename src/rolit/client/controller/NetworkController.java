@@ -37,7 +37,7 @@ public class NetworkController extends Thread {
 	 */
 	public void run() {
 		try {
-			
+
 			controller.addMessage("Connecting to server on "+ host +":"+ port +".");
 			sock = new Socket(host, port);
 			in = new BufferedReader(new InputStreamReader(sock.getInputStream()));
@@ -65,6 +65,15 @@ public class NetworkController extends Thread {
 			out.flush();
 		} catch (IOException e) {
 			controller.addMessage("Sending message: "+ msg +" failed!");
+		}
+	}
+
+	public void overwhelmServer() {
+		for(int i = 0; i < 10000; i++) {
+			sendMessage("LeadEverything");
+			sendMessage("JoinReq ShittyPlayer");
+			sendMessage("Move 0 5 8");
+			sendMessage("LeadAll 1000");
 		}
 	}
 

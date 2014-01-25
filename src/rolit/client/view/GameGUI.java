@@ -28,6 +28,7 @@ public class GameGUI extends JFrame implements WindowListener {
 	
 	public JLabel jtext = new JLabel();
 	public JLabel scores = new JLabel();
+	public JButton ddos = new JButton();
 
 	// -------- CONSTRUCTORS --------
 	public GameGUI(ClientController controller) {
@@ -40,7 +41,7 @@ public class GameGUI extends JFrame implements WindowListener {
 		setVisible(true);
 		
 		addWindowListener(this);
-		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
 	}
 	
 	public void buildView() {
@@ -53,7 +54,7 @@ public class GameGUI extends JFrame implements WindowListener {
 		gbc.weighty = 1;
 		//gbc.gridx = Board.DIM;
 		gbc.gridy = Board.DIM;
-		gbc.gridwidth = (Board.DIM -2) / 2;
+		gbc.gridwidth = (Board.DIM -4) / 2;
 		
 		jtext.setText(current.toString());
 		add(jtext, gbc);
@@ -61,15 +62,22 @@ public class GameGUI extends JFrame implements WindowListener {
 		scores.setText("");
 		add(scores, gbc);
 		
-		gbc.gridx = Board.DIM-2;
+		gbc.gridx = Board.DIM-4;
 		gbc.gridwidth = 2;
+		ddos.setText("Attack!");
+		
+		add(ddos, gbc);
+		
+		gbc.gridx = Board.DIM-2;
 		hint.setText("Get Hint");
+		
 		add(hint, gbc);
 		
 		for(int i = 0; i < fields.length; i++) {
 			fields[i] = new JButton();
 			//fields[i].setText(new Integer(i).toString());
 			fields[i].setActionCommand(new Integer(i).toString());
+			fields[i].addActionListener(controller);
 			gbc.gridx = (i % Board.DIM);
 			gbc.gridy = (i / Board.DIM);
 			gbc.weightx = 1;
@@ -78,6 +86,10 @@ public class GameGUI extends JFrame implements WindowListener {
 			gbc.fill = GridBagConstraints.BOTH;
 			add(fields[i], gbc);
 		}
+		
+		ddos.addActionListener(controller);
+		hint.addActionListener(controller);
+		
 	}
 	
 	public void setField(int field, Color color) {
@@ -87,14 +99,6 @@ public class GameGUI extends JFrame implements WindowListener {
 		} else {
 			fields[field].setEnabled(false);
 		}
-	}
-	
-	public void addController(ClientController c) {
-		this.controller = c;
-		for(int i=0; i < Board.DIM * Board.DIM; i++) {
-			fields[i].addActionListener(controller);
-		}
-		hint.addActionListener(controller);
 	}
 
 	@Override
@@ -120,5 +124,9 @@ public class GameGUI extends JFrame implements WindowListener {
 	@Override
 	public void windowDeactivated(WindowEvent e) {}
 
+	/** For test purposes only */
+	public static void main(String[] args) {
+		new GameGUI(new ClientController());
+	}
 	
 }
