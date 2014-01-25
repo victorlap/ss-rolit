@@ -326,7 +326,6 @@ public class Board extends Observable {
 	public boolean checkMove(int field, Color color) {
 		
 		if(isEmptyField(field) && isBordering(field)) {
-			//System.out.println(hasFlippableField(color));
 			if(getFlippableFields(color)[field]) {
 				return true;
 			} else if (hasFlippableField(color)) {
@@ -440,16 +439,6 @@ public class Board extends Observable {
 		boolean[] flippableFields = new boolean[DIM*DIM];
 		
 		for (int i = 0; i < fields.length; i++) {
-			/*if(i == 44) {
-				System.out.println((i - checkNorth(i, color) >= DIM*2) && (checkNorth(i,color) >= 0));
-				System.out.println((i - checkNorthEast(i, color) >= DIM * 2-2) && (checkNorthEast(i,color) >= 0));
-				System.out.println((checkEast(i, color) - i >= 2));
-				System.out.println((checkSouthEast(i, color) - i >= 18));
-				System.out.println((checkSouth(i, color) - i >= 16));
-				System.out.println((checkSouthWest(i, color) - i >= 14));
-				System.out.println((i - checkWest(i, color) >= 2) && (checkWest(i, color) >= 0));
-				System.out.println((i - checkNorthWest(i, color) >= 18) && (checkNorthWest(i, color) >= 0));
-			}*/
 			if (isEmptyField(i) && isBordering(i) && 
 					(
 						((i - checkNorth(i, color) >= DIM * 2) && (checkNorth(i,color) >= 0)) ||
@@ -462,11 +451,8 @@ public class Board extends Observable {
 						((i - checkNorthWest(i, color) >= DIM * 2 + 2) && (checkNorthWest(i, color) >= 0)))
 					) {
 				flippableFields[i] = true;
-				//System.out.print(i + ", ");
-				
 			}
 		}
-	    //System.out.println();
 		return flippableFields;
 	}
 
@@ -495,16 +481,6 @@ public class Board extends Observable {
 		boolean[] tempFlippableFields = this.getFlippableFields(color);
 		
 		for (int i = 0; i < qualityFields.length; i++) {
-			/*if(i == 43) {
-			System.out.println(((checkNorth(i, color) >= 0) 		? ((i - checkNorth(i, color)) / DIM)				: 0));
-			System.out.println(((checkNorthEast(i, color) >= 0) 	? (i - checkNorthEast(i, color) / (DIM - 1)) 	: 0));
-			System.out.println(((checkEast(i, color) >= 0) 		? (checkEast(i, color) - i)						: 0));
-			System.out.println(((checkSouthEast(i, color) >= 0)	? (checkSouthEast(i, color) - i / (DIM + 1)) 	: 0));
-			System.out.println(((checkSouth(i, color) >= 0)		? (checkSouth(i, color) - i / DIM)				: 0));
-			System.out.println((checkSouthWest(i, color) >= 0)    ? (checkSouthWest(i, color) - i / (DIM - 1))    : 0);
-			System.out.println((checkWest(i, color) >= 0)         ? (i - checkWest(i, color))                     : 0);
-			System.out.println((checkNorthWest(i, color) >= 0)    ? (i - checkNorthWest(i, color) / (DIM + 1))    : 0);
-		}*/
 			if (tempFlippableFields[i]) {
 				qualityFields[i] = 
 					((checkNorth(i, color) >= 0) 		? ((i - checkNorth(i, color)) / DIM) 			: 0) +
@@ -519,7 +495,6 @@ public class Board extends Observable {
 				qualityFields[i] = 0;
 			}
 		}
-		//System.out.println(Arrays.toString(qualityFields));
 		return qualityFields;
 	}
 	
@@ -534,7 +509,6 @@ public class Board extends Observable {
 		
 		while(onBoard(north) && getField(north) != Color.NONE) {
 			if (getField(north) == color) {
-				//if(field == 44) System.out.println(field +""+ color);
 				return north;
 			}
 			return checkNorth(north, color);
