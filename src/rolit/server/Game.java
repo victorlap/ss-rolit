@@ -1,6 +1,9 @@
-package rolit;
+package rolit.server;
 
 import java.awt.Color;
+
+import rolit.Board;
+import rolit.Player;
 
 
 /**

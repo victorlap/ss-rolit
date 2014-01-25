@@ -1,13 +1,14 @@
 package rolit.client.controller;
 
-import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Observable;
 import java.util.Observer;
 
 import rolit.Board;
-import rolit.Game;
+import rolit.Color;
 import rolit.Player;
 import rolit.client.view.ConnectGUI;
 import rolit.client.view.GameGUI;
@@ -16,12 +17,13 @@ import rolit.client.view.LobbyGUI;
 public class ClientController implements Observer, ActionListener {
 
 	private Board board;
-	private Game game;
 	private Player player;
 	
 	private ConnectGUI connectGUI;
 	private GameGUI gameGUI;
 	private LobbyGUI lobbyGUI;
+	
+	private NetworkController network;
 	
 	private int lastHint = -1;
 
@@ -34,18 +36,22 @@ public class ClientController implements Observer, ActionListener {
 		return player;
 	}
 	
-	public Game getGame() {
-		return game;
-	}
-	
 	public void doMove(int field, Color color) {
-		game.doMove(field, color);
+		board.doMove(field, color);
 		update(board, null);
 	}
 
-	public void addMessage(String string) {
+	public void addMessage(String msg) {
+		System.out.println(msg);
 		// TODO Auto-generated method stub
 		
+	}
+	
+	public void alert(String msg) {
+		if(connectGUI != null && connectGUI.isVisible()) {
+			connectGUI.alert(msg);
+		}
+		addMessage(msg);
 	}
 
 	public void deadConnection() {
@@ -76,23 +82,52 @@ public class ClientController implements Observer, ActionListener {
 		} else {
 			gameGUI.setVisible(true);
 		}
-		lobbyGUI.setVisible(false);
-		
-		
+		lobbyGUI.setVisible(false);		
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent e) {
-		if(e.getSource().equals(gameGUI.hint)) {
+	public void actionPerformed(ActionEvent ev) {
+		/** Als we willen connecten met de server */
+		if(connectGUI != null && ev.getSource() == connectGUI.bConnect) {
+			addMessage("Connecting to the server..");
+			InetAddress host;
+			try {
+				host = InetAddress.getByName(connectGUI.getHost());
+			} catch (UnknownHostException e) {
+				host = null;
+				alert("Invalid host name!");
+			}
+			
+			int port = 0;
+			try {
+				port = Integer.parseInt(connectGUI.getPort());
+				if(port < 1 || port > 65535) {
+					alert("Invalid port number!");
+				}
+			} catch (NumberFormatException e) {
+				alert("Invalid port number!");
+			}
+			
+			if(host != null) {
+				String name = connectGUI.getName();
+				if(name.equals("")) {
+					name = "NoName";
+				}
+				
+				network = new NetworkController(host, port, this);
+				network.start();
+			}
+			
+			/** Als we een hint willen opvragen */
+		} else if(ev.getSource().equals(gameGUI.hint)) { 
 			if (lastHint != -1) {
-				gameGUI.fields[lastHint].setBackground(Color.WHITE);
+				gameGUI.fields[lastHint].setBackground(Color.NONE.toColor());
 			}
 			int hint = board.getHint(gameGUI.current);
-			gameGUI.fields[hint].setBackground(Color.DARK_GRAY);
+			gameGUI.fields[hint].setBackground(Color.HINT.toColor());
 			lastHint = hint;
-			//view.repaint();
-		} else {
-			int field = Integer.parseInt(e.getActionCommand());
+		} else { // Move is done
+			int field = Integer.parseInt(ev.getActionCommand());
 			if(board.checkMove(field, gameGUI.current)){
 				board.doMove(field, gameGUI.current);
 				gameGUI.current = gameGUI.current.next();
@@ -111,5 +146,11 @@ public class ClientController implements Observer, ActionListener {
 		for(int i = 0; i < Board.DIM * Board.DIM; i++) {
 			gameGUI.setField(i, board.getField(i));
 		}		
+	}
+
+	public void stopGame() {
+		lobbyGUI.setVisible(true);
+		gameGUI.setVisible(false);
+		gameGUI = null;
 	}
 }

@@ -13,11 +13,13 @@ import java.util.Scanner;
 import rolit.Color;
 
 public class NetworkController extends Thread {
-	
+
 	private ClientController controller;
 	private Socket sock;
 	private BufferedReader in;
 	private BufferedWriter out;
+	private InetAddress host;
+	private int port;
 
 	/**
 	 * Constructs a Client-object and tries to make a socket connection
@@ -26,25 +28,22 @@ public class NetworkController extends Thread {
 		super();
 
 		this.controller = controller;
-		
-		try {
-			sock = new Socket(host, port);
-			in = new BufferedReader(new InputStreamReader(sock.getInputStream()));
-			out = new BufferedWriter(new OutputStreamWriter(sock.getOutputStream()));
-			
-			controller.addMessage("Connecting to server on "+ host +":"+ port +".");
-
-		} catch (IOException e) {
-			shutdown();
-		}
+		this.host = host;
+		this.port = port;
 	}
 
 	/**
 	 * Reads the messages in the socket connection. Each message will be forwarded to the MessageUI
 	 */
 	public void run() {
-		while(true) {
-			try {
+		try {
+			
+			controller.addMessage("Connecting to server on "+ host +":"+ port +".");
+			sock = new Socket(host, port);
+			in = new BufferedReader(new InputStreamReader(sock.getInputStream()));
+			out = new BufferedWriter(new OutputStreamWriter(sock.getOutputStream()));
+
+			while(true) {
 				if(in.ready()) {
 					String command = in.readLine();
 					if(command != null) {
@@ -53,9 +52,9 @@ public class NetworkController extends Thread {
 						shutdown();
 					}
 				}
-			} catch (IOException e) {
-				shutdown();
-			}	
+			}
+		} catch (IOException e) {
+			shutdown();
 		}
 	}
 
@@ -76,18 +75,18 @@ public class NetworkController extends Thread {
 			out.close();
 			sock.close();
 		} catch (NullPointerException e) {
-			controller.addMessage("Could not connect to server");
+			controller.alert("Could not connect to server!");
 		} catch (IOException e) {
-			e.printStackTrace();
+			controller.addMessage("Exception: "+ e.getMessage());
 		}
 		controller.deadConnection();
 	}
-	
+
 	//@ requires command != null;
 	private void execute(String line) {
 		Scanner in = new Scanner(line);
 		String cmd = in.next();
-		
+
 		if(cmd.equals("Extensions")) {
 			sendMessage("ExtensionsRes 1");
 		}
@@ -95,7 +94,7 @@ public class NetworkController extends Thread {
 			// TODO: Afhandelen en even vragen welke integers er gebruikt moeten worden.
 			sendMessage("JoinReq victoryuri");
 		}
-		else if(cmd.equals("Encode")) {
+		else if(cmd.equals("Encode")) { // Beveiliging gedoe
 			// TODO: Hier gaan kloten met die authenticatie;
 		}
 		else if(cmd.equals("JoinConfirm")) {
@@ -106,7 +105,7 @@ public class NetworkController extends Thread {
 			if(in.hasNext()) {
 				String temp = in.next();
 				if(temp.equals("0")) { // Nickname is al aanwezig op de server
-					
+
 				}
 				if(temp.equals("1")) { // Signature is niet goed; Probeer het opniew;
 					execute("Encode");
@@ -127,22 +126,22 @@ public class NetworkController extends Thread {
 			// READY; SET; GO!
 		}
 		else if(cmd.equals("Turn")) { // We zijn aan de beurt
-			
+
 		}
 		else if(cmd.equals("MoveDeny")) { // Whoops kan niet
-			
+
 		}
 		else if(cmd.equals("NotifyMove")) { // Een andere speler heeft een move gedaan
-			
+
 		}
 		else if(cmd.equals("GameEnd")) { // Nu alweer af??
-			
+
 		}
 		else if(cmd.equals("LossPlayer")) { // We zijn iemand kwijt
-			
+
 		}
 		else if(cmd.equals("LeadReturn")) { // We hebben een leaderboard opgevraagd, en nu komt het allemaal hierheen
-			
+
 		}
 		in.close();
 	}

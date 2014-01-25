@@ -2,6 +2,8 @@ package rolit.client.view;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -11,7 +13,7 @@ import rolit.Board;
 import rolit.Color;
 import rolit.client.controller.ClientController;
 
-public class GameGUI extends JFrame {
+public class GameGUI extends JFrame implements WindowListener {
 	
 	/**
 	 * Auto generated Serial Version UID
@@ -28,8 +30,20 @@ public class GameGUI extends JFrame {
 	public JLabel scores = new JLabel();
 
 	// -------- CONSTRUCTORS --------
-	public GameGUI(ClientController clientController) {
+	public GameGUI(ClientController controller) {
 		
+		super("RolitClient Game");
+		this.controller = controller;
+		
+		buildView();
+		
+		setVisible(true);
+		
+		addWindowListener(this);
+		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+	}
+	
+	public void buildView() {
 		setLayout(new GridBagLayout());
 		GridBagConstraints gbc = new GridBagConstraints();
 
@@ -64,8 +78,6 @@ public class GameGUI extends JFrame {
 			gbc.fill = GridBagConstraints.BOTH;
 			add(fields[i], gbc);
 		}
-		
-		setVisible(true);
 	}
 	
 	public void setField(int field, Color color) {
@@ -84,6 +96,29 @@ public class GameGUI extends JFrame {
 		}
 		hint.addActionListener(controller);
 	}
+
+	@Override
+	public void windowClosing(WindowEvent e) {
+		controller.stopGame();
+	}
+
+	@Override
+	public void windowOpened(WindowEvent e) {}
+
+	@Override  
+	public void windowClosed(WindowEvent e) {}
+
+	@Override
+	public void windowIconified(WindowEvent e) {}
+
+	@Override
+	public void windowDeiconified(WindowEvent e) {}
+
+	@Override
+	public void windowActivated(WindowEvent e) {}
+
+	@Override
+	public void windowDeactivated(WindowEvent e) {}
 
 	
 }

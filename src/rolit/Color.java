@@ -3,6 +3,7 @@ package rolit;
 public enum Color {
 
 	NONE,
+	HINT,
 	RED,
 	YELLOW,
 	GREEN,
@@ -48,6 +49,8 @@ public enum Color {
 			return java.awt.Color.GREEN;
 		case BLUE:
 			return java.awt.Color.BLUE;
+		case HINT:
+			return java.awt.Color.DARK_GRAY;
 		default:
 			return java.awt.Color.WHITE;
 		}
