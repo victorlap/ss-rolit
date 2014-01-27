@@ -1,4 +1,4 @@
-package rolit.server;
+package rolit.server.controller;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -6,15 +6,18 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class Server extends Thread {
+
+public class NetworkController extends Thread {
 	private int port;
 	private ServerSocket ss;
-	private Collection<ClientHandler> threads;
+	private Collection<ClientHandlerController> threads;
+	private ServerController controller;
 
         /** Constructs a new Server object */
-	public Server(int portArg) {
+	public NetworkController(int portArg, ServerController controller) {
 		this.port = portArg;
-		this.threads = new ArrayList<ClientHandler>();
+		this.threads = new ArrayList<ClientHandlerController>();
+		this.controller = controller;
 	}
 
 	/**
@@ -34,22 +37,33 @@ public class Server extends Thread {
 		while(true) {
 			try {
 				Socket newSocket = ss.accept();
-				ClientHandler newHandler = new ClientHandler(this, newSocket);
+				ClientHandlerController newHandler = new ClientHandlerController(this, newSocket, controller);
+				controller.addMessage("Trying to connect to new Client");
 				addHandler(newHandler);
+				newHandler.sendMessage("Extensions");
 			} catch(IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}	
 	}
+	
+	public boolean isUsernameInUse(String username) {
+		for(ClientHandlerController handler : threads) {
+			if(handler.getUsername().equals(username)) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 	/**
 	 * Sends a message using the collection of connected ClientHandlers
          * to all connected Clients.
-	 * @param msg message that is send
+	 * @param msg message that is sent
 	 */
 	public void broadcast(String msg) {
-		for(ClientHandler handler : threads) {
+		for(ClientHandlerController handler : threads) {
 			handler.sendMessage(msg);
 		}
 	}
@@ -58,22 +72,16 @@ public class Server extends Thread {
 	 * Add a ClientHandler to the collection of ClientHandlers.
 	 * @param handler ClientHandler that will be added
 	 */
-	public void addHandler(ClientHandler handler) {
+	public void addHandler(ClientHandlerController handler) throws IOException {
 		threads.add(handler);
-		try {
-			handler.start();
-			handler.announce();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		handler.start();
 	}
 
 	/**
 	 * Remove a ClientHandler from the collection of ClientHanlders. 
 	 * @param handler ClientHandler that will be removed
 	 */
-	public void removeHandler(ClientHandler handler) {
+	public void removeHandler(ClientHandlerController handler) {
 		threads.remove(handler);
 	}
 }

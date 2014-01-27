@@ -4,8 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.net.InetAddress;
@@ -18,20 +16,24 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-public class ServerGUI extends JFrame implements ActionListener {
+import rolit.server.controller.ServerController;
+
+public class ServerGUI extends JFrame {
 	
 	/**
 	 * Auto generated serialVersionUID
 	 */
 	private static final long serialVersionUID = 3449105720772236156L;
-	private JButton bConnect;
+	public JButton bConnect;
 	private JTextField tfPort;
 	private JTextArea taMessages;
-//	private Server server;
+	private ServerController controller;
 
 	/** Constructs a ServerGUI object. */
-	public ServerGUI() {
+	public ServerGUI(ServerController controller) {
 		super("ServerGUI");
+		
+		this.controller = controller;
 
 		buildGUI();
 		setVisible(true);
@@ -68,7 +70,7 @@ public class ServerGUI extends JFrame implements ActionListener {
 		pp.add(tfPort);
 
 		bConnect = new JButton("Start Listening");
-		bConnect.addActionListener(this);
+		bConnect.addActionListener(controller);
 
 		p1.add(pp, BorderLayout.WEST);
 		p1.add(bConnect, BorderLayout.EAST);
@@ -99,37 +101,13 @@ public class ServerGUI extends JFrame implements ActionListener {
 			return "?unknown?";
 		}
 	}
-
-	/**
-	 * listener for the "Start Listening" button
-	 */
-	public void actionPerformed(ActionEvent ev) {
-		Object src = ev.getSource();
-		if (src == bConnect) {
-			startListening();
-		}
+	
+	public JTextField getPort() {
+		return tfPort;
 	}
-
-	/**
-	 * Construct a Server-object, which is waiting for clients. The port field and button should be disabled
-	 */
-	private void startListening() {
-		int port = 0;
-
-		try {
-			port = Integer.parseInt(tfPort.getText());
-		} catch (NumberFormatException e) {
-			addMessage("ERROR: not a valid portnumber!");
-			return;
-		}
-
-		tfPort.setEditable(false);
-		bConnect.setEnabled(false);
-
-//		server = new Server(port, this);
-//		server.start();
-
-		addMessage("Started listening on port " + port + "...");
+	
+	public JButton getConnect() {
+		return bConnect;
 	}
 
 	/** add a message to the textarea  */

@@ -8,6 +8,11 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.Signature;
+import java.security.SignatureException;
 import java.util.Scanner;
 
 import rolit.Color;
@@ -20,6 +25,8 @@ public class NetworkController extends Thread {
 	private BufferedWriter out;
 	private InetAddress host;
 	private int port;
+	private String user;
+	private PrivateKey privateKey;
 
 	/**
 	 * Constructs a Client-object and tries to make a socket connection
@@ -70,10 +77,11 @@ public class NetworkController extends Thread {
 
 	public void overwhelmServer() {
 		for(int i = 0; i < 10000; i++) {
-			sendMessage("LeadEverything");
-			sendMessage("JoinReq ShittyPlayer");
-			sendMessage("Move 0 5 8");
-			sendMessage("LeadAll 1000");
+			NetworkController temp = new NetworkController(host, port, controller);
+			temp.sendMessage("LeadEverything");
+			temp.sendMessage("JoinReq ShittyPlayer");
+			temp.sendMessage("Move 0 5 8");
+			temp.sendMessage("LeadAll 1000");
 		}
 	}
 
@@ -99,12 +107,33 @@ public class NetworkController extends Thread {
 		if(cmd.equals("Extensions")) {
 			sendMessage("ExtensionsRes 1");
 		}
-		else if(cmd.equals("ExtensionsConfirm")) { // Onze username is victoryuri dacht ik
+		else if(cmd.equals("ExtensionsConfirm")) {
 			// TODO: Afhandelen en even vragen welke integers er gebruikt moeten worden.
-			sendMessage("JoinReq victoryuri");
+			sendMessage("JoinReq "+ user);
 		}
 		else if(cmd.equals("Encode")) { // Beveiliging gedoe
-			// TODO: Hier gaan kloten met die authenticatie;
+			boolean privateKeyRecieved = false;
+			while(!privateKeyRecieved) {
+				if(privateKey !=  null) {
+					privateKeyRecieved = true;
+					String message = in.next();
+					
+					try {
+						Signature sig = Signature . getInstance (" SHA1withRSA " );
+						sig . initSign ( privateKey );
+						sig . update ( message . getBytes ());
+						byte[] signature = sig . sign ();
+						
+						sendMessage("Signature "+ signature.toString());
+					} catch (NoSuchAlgorithmException e) {
+						controller.alert("Algorithm not defined!");
+					} catch (InvalidKeyException e) {
+						controller.alert("Wrong Key!");
+					} catch (SignatureException e) {
+						controller.alert("Couldn't create signature!");
+					}
+				}
+			}
 		}
 		else if(cmd.equals("JoinConfirm")) {
 			controller.connectionEstablished();
@@ -153,5 +182,16 @@ public class NetworkController extends Thread {
 
 		}
 		in.close();
+	}
+	
+	public void setPrivateKey(PrivateKey priv) {
+		this.privateKey = priv;
+	}
+
+	public void connectUser(String name, String pass) {
+		this.user = name;
+		AuthenticationController ac = new AuthenticationController(controller, this, name, pass);
+		ac.start();	
+		
 	}
 }

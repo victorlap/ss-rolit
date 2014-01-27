@@ -115,6 +115,7 @@ public class ClientController implements Observer, ActionListener {
 				}
 				
 				network = new NetworkController(host, port, this);
+				network.connectUser(connectGUI.getName(), connectGUI.getPass());
 				network.start();
 			}
 			

@@ -64,6 +64,10 @@ public class ConnectGUI extends JFrame {
 	public String getName() {
 		return tfName.getText();
 	}
+	
+	public String getPass() {
+		return tfPass.getPassword().toString();
+	}
 
 	/** builds the GUI. */
 	public void buildGUI() {

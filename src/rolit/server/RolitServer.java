@@ -1,9 +1,11 @@
 package rolit.server;
 
+import rolit.server.controller.ServerController;
+
 
 
 /**
- * Deze klasse regelt de inkomende connecties en laat spelers samen in een game
+ * Main Class
  * 
  * @author Victor Lap en Yuri van Midden
  * @version 1.0.0
@@ -13,7 +15,8 @@ package rolit.server;
 public class RolitServer {
 
 	public static void main (String[] args) {
-		//GUI gui = new ServerGUI();
+		
+		new ServerController();
 	
 	}
 }

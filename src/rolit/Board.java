@@ -507,7 +507,7 @@ public class Board extends Observable {
 	private int checkNorth(int field, Color color) {
 		int north = field - DIM;
 		
-		while(onBoard(north) && getField(north) != Color.NONE) {
+		while(onBoard(north) && !isEmptyField(north)) {
 			if (getField(north) == color) {
 				return north;
 			}
@@ -525,7 +525,7 @@ public class Board extends Observable {
 	private int checkNorthEast(int field, Color color) {
 		int northeast = field - DIM + 1;
 		
-		while(onBoard(northeast) && getField(northeast) != Color.NONE && (northeast % DIM != 0)) {
+		while(onBoard(northeast) && !isEmptyField(northeast) && (northeast % DIM != 0)) {
 			if (getField(northeast) == color) {
 				return northeast;
 			}
@@ -543,7 +543,7 @@ public class Board extends Observable {
 	private int checkEast(int field, Color color) {
 		int east = field + 1;
 		
-		while(onBoard(east) && getField(east) != Color.NONE && (east % DIM != 0)) {
+		while(onBoard(east) && !isEmptyField(east) && (east % DIM != 0)) {
 			if (getField(east) == color) {
 				return east;
 			}
@@ -561,7 +561,7 @@ public class Board extends Observable {
 	private int checkSouthEast(int field, Color color) {
 		int southEast = field + DIM + 1;
 		
-		while(onBoard(southEast) && getField(southEast) != Color.NONE && (southEast % DIM != 0)) {
+		while(onBoard(southEast) && !isEmptyField(southEast) && (southEast % DIM != 0)) {
 			if (getField(southEast) == color) {
 				return southEast;
 			}
@@ -579,7 +579,7 @@ public class Board extends Observable {
 	private int checkSouth(int field, Color color) {
 		int south = field + DIM;
 		
-		while(onBoard(south) && getField(south) != Color.NONE) {
+		while(onBoard(south) && !isEmptyField(south)) {
 			if (getField(south) == color) {
 				return south;
 			}
@@ -597,7 +597,7 @@ public class Board extends Observable {
 	private int checkSouthWest(int field, Color color) {
 		int southwest = field + DIM - 1;
 		
-		while(onBoard(southwest) && getField(southwest) != Color.NONE && (((southwest + 1) % DIM) != 0)) {
+		while(onBoard(southwest) && !isEmptyField(southwest) && (((southwest + 1) % DIM) != 0)) {
 			if (getField(southwest) == color) {
 				return southwest;
 			}
@@ -615,7 +615,7 @@ public class Board extends Observable {
 	private int checkWest(int field, Color color) {
 		int west = field - 1;
 		
-		while(onBoard(west) && getField(west) != Color.NONE && (((west + 1) % DIM) != 0)) {
+		while(onBoard(west) && !isEmptyField(west) && (((west + 1) % DIM) != 0)) {
 			if (getField(west) == color) {
 				return west;
 			}
@@ -633,7 +633,7 @@ public class Board extends Observable {
 	private int checkNorthWest(int field, Color color) {
 		int northWest = field - DIM - 1;
 		
-		while(onBoard(northWest) && getField(northWest) != Color.NONE && (((northWest + 1) % DIM) != 0)) {
+		while(onBoard(northWest) &&  !isEmptyField(northWest) && (((northWest + 1) % DIM) != 0)) {
 			if (getField(northWest) == color) {
 				return northWest;
 			}
