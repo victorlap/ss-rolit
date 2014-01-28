@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Scanner;
 
+import rolit.Color;
 import rolit.Player;
 import rolit.server.Game;
 
@@ -14,6 +15,19 @@ import rolit.server.Game;
 public class NetworkController extends Thread {
 	
 	public static final String EXTENSIONS 			= "Extensions";
+	public static final String LEADEVERYTHING		= "LeadEverything";
+	public static final String MOVE					= "Move";
+	public static final String LEADALL				= "LeadAll";
+	public static final String COLOUR			 	= "Colour";
+	public static final String COLOURDENY			= "ColourDeny";
+	public static final String GAMESTART			= "GameStart";
+	public static final String TURN					= "Turn";
+	public static final String MOVEDENY				= "MoveDeny";
+	public static final String NOTIFYMOVE			= "NotifyMove";
+	public static final String GAMEEND				= "GameEnd";
+	public static final String LOSSPLAYER			= "LossPlayer";
+	public static final String LEADRETURN			= "LeadReturn";
+	public static final String NOTIFYNEWPLAYER		= "NotifyNewPlayer";
 	public static final String EXTENSIONSRES 		= "ExtensionsRes";
 	public static final String EXTENSIONSCONFIRM 	= "ExtensionsConfirm";
 	public static final String COLOURREQ 			= "ColourReq";
@@ -97,6 +111,14 @@ public class NetworkController extends Thread {
 			controller.addMessage("[BROADCAST] "+ msg);
 		}
 	}
+	
+	/** Send message to specific client */
+	public void broadcast(String msg, ClientHandlerController chc) {
+		if(msg != null && chc != null) {
+			chc.sendMessage(msg);
+			controller.addMessage("[BROADCAST to "+ chc.getSocket().getInetAddress() +"] "+ msg);
+		}
+	}
 
 	/**
 	 * Add a ClientHandler to the collection of ClientHandlers.
@@ -125,14 +147,27 @@ public class NetworkController extends Thread {
 		return newGame;
 	}
 	
+	/** Get game by player */
+	public Game getGame(Player byPlayer) {
+		for(Game game: games) {
+			for(Player player : game.getPlayers()) {
+				if(player == byPlayer) {
+					return game;
+				}
+			}
+		}
+		/** Hij zit in geen enkele game */
+		return null;
+	}
+	
 	public void execute(String command, ClientHandlerController sender) {
 		Scanner in = new Scanner(command);
 		String cmd = in.next();
 		
 		if(cmd.equals(EXTENSIONSRES)) {
-			broadcast(EXTENSIONSCONFIRM + DELIM + "1");
+			broadcast(EXTENSIONSCONFIRM + DELIM + "1", sender);
 		}
-		if(cmd.equals(NetworkController.JOINREQ)) {
+		if(cmd.equals(JOINREQ)) {
 			/*if(network.isUsernameInUse(username)) {
 				network.broadcast(NetworkController.JOINDENY + NetworkController.DELIM + "0");
 				shutdown();
@@ -165,9 +200,23 @@ public class NetworkController extends Thread {
 					System.out.println("3");
 				}
 				else {
-					broadcast(JOINDENY + DELIM + "0");
+					broadcast(JOINDENY + DELIM + "0", sender);
 				}
 			}			
+		}
+		if(cmd.equals(COLOUR) && in.hasNextInt()) {
+			Game game = getGame(sender.getPlayer());
+			if(game != null) {
+				Color color = Color.fromInt(in.nextInt());
+				if(color != Color.NONE && !game.isColorInUse(color))  {
+					sender.getPlayer().setColor(color);
+					broadcast(NOTIFYNEWPLAYER + DELIM + game.getPlayerString());
+				} else { // Color is already taken
+					broadcast(COLOURDENY, sender);
+				}
+			}
+			
+			// Hij zit niet in een game, of hij heeft geen kleur meegegeven, dus we doen niks
 		}
 		/*if(cmd.equals(NetworkController.SIGNATURE)) {
 			AuthenticationController ac = new AuthenticationController(controller, this, username);

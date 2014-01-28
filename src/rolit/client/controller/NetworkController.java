@@ -13,7 +13,11 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.Signature;
 import java.security.SignatureException;
+import java.util.ArrayList;
 import java.util.Scanner;
+
+import rolit.Color;
+import rolit.Player;
 
 public class NetworkController extends Thread {
 	
@@ -184,14 +188,24 @@ public class NetworkController extends Thread {
 			}
 		}
 		else if(cmd.equals(COLOURREQ)) {
-			//TODO: Afhandelen welke kleur je wilt zijn;\
 			controller.setColorPane(in.nextLine());
-			//sendMessage(COLOUR + DELIM + Color.RED.toInt());
 		}
 		else if(cmd.equals(COLOURDENY)) {
-			// TODO: AFwachten op fb;
+			controller.connectGUI.bSetReady.setEnabled(false);
+			controller.connectGUI.getColor().setEnabled(false);
+			controller.alert("Color already in use");
 		}
 		else if(cmd.equals(NOTIFYNEWPLAYER)) {
+			ArrayList<Player> players = new ArrayList<Player>();
+			int i = 0;
+			while(in.hasNext()) {
+				Player player = new Player();
+				player.setName(in.next());
+				player.setColor(Color.fromInt(i));
+				players.add(player);
+				i++;
+			}
+			controller.setLobby(players);
 			// Er is een nieuwe speler, voeg hem toe aan de array en speel er op los
 		}
 		else if(cmd.equals(GAMESTART)) {
@@ -213,7 +227,7 @@ public class NetworkController extends Thread {
 
 		}
 		else if(cmd.equals(LEADRETURN)) { // We hebben een leaderboard opgevraagd, en nu komt het allemaal hierheen
-
+			// We doen niet aan leaderboard;
 		}
 		in.close();
 	}

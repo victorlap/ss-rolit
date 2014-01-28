@@ -69,7 +69,7 @@ public class Board extends Observable {
 	/**
 	 * Returns the column of a field at <code>index</code>
 	 * @param index
-	 * @return<code>int</code> of the col
+	 * @return int of the col
 	 */
 	public int indexToCol(int index) {
 		return index % DIM;

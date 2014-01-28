@@ -15,6 +15,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import rolit.Color;
@@ -33,11 +34,11 @@ public class ConnectGUI extends JFrame {
 	private JTextField tfName;
 	private JTextField tfHost;
 	private JTextField tfPass;
+	public JTextArea tfLobby;
 	private JComboBox<String> cbColor;
 	private ClientController controller;
 
 	/** Constructs a ServerGUI object. 
-	 * @param clientController 
 	 **/
 	public ConnectGUI(ClientController controller) {
 		super("RolitClient Connect");
@@ -78,7 +79,7 @@ public class ConnectGUI extends JFrame {
 
 	/** builds the GUI. */
 	public void buildGUI() {
-		setSize(400, 190);
+		setSize(400, 350);
 		setLocation(140,140);
 
 		// Panel p1 - Listen
@@ -127,6 +128,9 @@ public class ConnectGUI extends JFrame {
 		bSetReady.addActionListener(controller);
 		bSetReady.setEnabled(false);
 		p2.add(bSetReady);
+		
+		tfLobby = new JTextArea("", 7, 25);
+		tfLobby.setEditable(false);
 
 		p1.add(pp, BorderLayout.WEST);
 		p1.add(p2, BorderLayout.EAST);
@@ -134,6 +138,7 @@ public class ConnectGUI extends JFrame {
 		Container cc = getContentPane();
 		cc.setLayout(new FlowLayout());
 		cc.add(p1);
+		cc.add(tfLobby);
 
 	}
 

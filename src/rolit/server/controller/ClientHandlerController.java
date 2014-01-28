@@ -30,8 +30,8 @@ public class ClientHandlerController extends Thread {
 	/**
 	 * Constructs a ClientHandler object
 	 * Initialises both Data streams.
-	 *@ requires server != null && sock != null;
 	 */
+	//@ requires server != null && sock != null;
 	public ClientHandlerController(NetworkController serverArg, Socket sockArg, ServerController controller) throws IOException {
 		this.network = serverArg;
 		this.sock = sockArg;

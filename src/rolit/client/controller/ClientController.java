@@ -20,7 +20,7 @@ public class ClientController implements Observer, ActionListener {
 
 	private Board board;
 	
-	private ConnectGUI connectGUI;
+	public ConnectGUI connectGUI;
 	private GameGUI gameGUI;
 	
 	private NetworkController network;
@@ -59,6 +59,8 @@ public class ClientController implements Observer, ActionListener {
 	public void alert(String msg) {
 		if(connectGUI != null && connectGUI.isVisible()) {
 			connectGUI.alert(msg);
+			connectGUI.bConnect.setEnabled(true);
+			connectGUI.bSetReady.setEnabled(true);
 		}
 		addMessage(msg);
 	}
@@ -158,5 +160,14 @@ public class ClientController implements Observer, ActionListener {
 		connectGUI.setVisible(true);
 		gameGUI.setVisible(false);
 		gameGUI = null;
+	}
+
+	public void setLobby(ArrayList<Player> players) {
+		connectGUI.tfLobby.setText(null);
+		connectGUI.tfLobby.append("<b>Lobby:</b>\n");
+		for(Player player : players) {
+			connectGUI.tfLobby.append(player.getColor() + " : "+ player.getName() +"\n");
+		}
+		
 	}
 }

@@ -121,6 +121,49 @@ public class Game {
 		return result;
 	}
 
+	public boolean isColorInUse(Color color) {
+		for(Player player : players) {
+			if(player.getColor() == color) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public Player getPlayerByColor(Color c) {
+		for(Player player : players) {
+			if(player.getColor() == c) {
+				return player;
+			}
+		}
+		return null;
+	}
+
+	public String getPlayerString() {
+		String result;
+		if(getPlayerByColor(Color.RED) != null) {
+			result = getPlayerByColor(Color.RED).getName() + " ";
+		} else {
+			result = "EMPTY ";
+		}
+		if(getPlayerByColor(Color.YELLOW) != null) {
+			result = result + getPlayerByColor(Color.YELLOW).getName() + " ";
+		} else {
+			result = result + "EMPTY ";
+		}
+		if(getPlayerByColor(Color.GREEN) != null) {
+			result = result + getPlayerByColor(Color.GREEN).getName() + " ";
+		} else {
+			result = result + "EMPTY ";
+		}
+		if(getPlayerByColor(Color.BLUE) != null) {
+			result = result + getPlayerByColor(Color.BLUE).getName() + " ";
+		} else {
+			result = result + "EMPTY ";
+		}
+		return result;
+	}
+
 
 
 }
