@@ -1,7 +1,5 @@
-package rolit.client;
+package rolit;
 
-import rolit.Board;
-import rolit.Color;
 
 public interface Strategy {
 	

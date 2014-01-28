@@ -123,10 +123,5 @@ public class GameGUI extends JFrame implements WindowListener {
 
 	@Override
 	public void windowDeactivated(WindowEvent e) {}
-
-	/** For test purposes only */
-	public static void main(String[] args) {
-		new GameGUI(new ClientController());
-	}
 	
 }

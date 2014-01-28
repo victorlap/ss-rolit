@@ -11,10 +11,7 @@ public class ServerController implements ActionListener {
 	ServerGUI serverGUI;
 	
 	public ServerController() {
-		
 		serverGUI = new ServerGUI(this);
-		
-		
 	}
 
 	/**

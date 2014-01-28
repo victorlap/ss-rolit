@@ -1,46 +1,45 @@
 package rolit.client;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import rolit.Board;
 import rolit.Color;
 import rolit.Player;
-import rolit.client.RandomStrategy;
-import rolit.client.Strategy;
 
 public class ComputerPlayer extends Player {
-
-	public ComputerPlayer(Color theColor, Strategy strategy) {
-		super(strategy.getName()+"-"+theColor, theColor);
-		this.strategy = strategy;
+	
+	public ComputerPlayer(Color color) {
+		setColor(color);
 	}
 	
-	public ComputerPlayer(Color theColor) {
-		super("Naive", theColor);
-		this.strategy = new RandomStrategy();
-	}
-	
-	public ComputerPlayer(String theName, Strategy strategy) {
-		super(theName);
-		this.strategy = strategy;
-	}
-	
-	public ComputerPlayer(String theName) {
-		super(theName);
-		this.strategy = new RandomStrategy();
-	}
-
 	@Override
-	public int determineMove(Board board) {
-		return strategy.determineMove(board, getColor());
-	}
-	
-	public Strategy getStrategy() {
-		return strategy;
-	}
-	
-	public void updateStrategy(Strategy strategy) {
-		this.strategy = strategy;
+	public String getName() {
+		return "ComputerPlayer";
 	}
 
-	
+	public int determineMove(Board b) {
+		
+		Color c = getColor();
+		
+		List<Integer> validMoves = new ArrayList<Integer>();
+		boolean[] tempFlipFields = b.getFlippableFields(c);
+		
+		for (int i = 0; i < tempFlipFields.length; i++) {
+			if (tempFlipFields[i]) {
+				validMoves.add(i);
+			}
+		}
+		
+		if(validMoves.isEmpty()) {
+			for (int i = 0; i < Board.DIM * Board.DIM; i++) {
+				if(b.isEmptyField(i) && b.isBordering(i)) {
+					validMoves.add(i);
+				}
+			}
+		}
+		
+		return validMoves.get((int) (Math.random() * validMoves.size()));
+	}
 
 }

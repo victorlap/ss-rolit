@@ -55,5 +55,37 @@ public enum Color {
 			return java.awt.Color.WHITE;
 		}
 	}
+	
+	public static Color fromInt(int i) {
+		switch(i) {
+		case 0:
+			return RED;
+		case 1:
+			return YELLOW;
+		case 2:
+			return GREEN;
+		case 3:
+			return BLUE;
+		default:
+			return NONE;
+		}
+	}
+	
+	public static Color fromString(String color) {
+		color = color.toUpperCase();
+		if(RED.toString().equals(color)) {
+			return RED;
+		}
+		if(YELLOW.toString().equals(color)) {
+			return YELLOW;
+		}
+		if(GREEN.toString().equals(color)) {
+			return GREEN;
+		}
+		if(BLUE.toString().equals(color)) {
+			return BLUE;
+		}
+		return NONE;
+	}
 
 }

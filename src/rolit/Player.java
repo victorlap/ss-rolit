@@ -1,6 +1,5 @@
 package rolit;
 
-import rolit.client.Strategy;
 
 /**
  * Initializes and maintains a player object, with its attached properties
@@ -8,24 +7,18 @@ import rolit.client.Strategy;
  * @version 1.0.0
  */
 
-public abstract class Player {
+public class Player {
 	
 	private String name;
     private Color color;
-    public Strategy strategy;
     private boolean takesPart;
     
     /**
      * Constructs a new Player object and defines the name.
-     * @param theColor 
-     */
-    public Player(String theName, Color theColor) {
-        this.name = theName;
-        this.color = theColor;
-    }
-    
-    public Player(String theName) {
-    	this.name = theName;
+     */    
+    public Player() {
+    	name = "[NOTCONNECTED]";
+    	color = Color.NONE;
     }
     
     public void setName(String name) {
@@ -44,7 +37,9 @@ public abstract class Player {
 	 * @param theColor of type <code>Color</code>
 	 */
 	public void setColor (Color theColor) {
-		this.color = theColor;
+		if(theColor != Color.NONE && theColor != Color.HINT) {
+			this.color = theColor;
+		}
 		takesPart = true;
 	}
 
@@ -62,24 +57,5 @@ public abstract class Player {
     public boolean isTakingPart() {
     	return takesPart;
     }
-    
-    /**
-     * Determines the field for the next move.
-     * 
-     * @param board
-     *            the current game board
-     * @return <code>int</code> with the player's choice
-     */
-    public abstract int determineMove(Board board);
-    
-    /**
-     * Makes a move on the board. <br>
-     * 
-     * @param board
-     *            the current board
-     */
-    public void makeMove(Board board) {
-        int choice = determineMove(board);
-        board.setField(choice, getColor());
-    }
+ 
 }

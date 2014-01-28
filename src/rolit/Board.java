@@ -3,7 +3,7 @@ package rolit;
 import java.util.Observable;
 
 import rolit.client.ComputerPlayer;
-import rolit.client.SmartStrategy;
+import rolit.client.SmartComputerPlayer;
 
 /**
  * Class that initializes, maintains and analyzes the board of the RolIt game.
@@ -343,9 +343,8 @@ public class Board extends Observable {
 	 * @return <code>int</code> with the hint index
 	 */
 	public int getHint(Color color) {
-		ComputerPlayer cp = new ComputerPlayer(color, new SmartStrategy());
+		ComputerPlayer cp = new SmartComputerPlayer(color);
 		return cp.determineMove(this);
-		
 	}
 	
 	/**

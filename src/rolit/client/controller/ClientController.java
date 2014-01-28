@@ -4,24 +4,24 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Scanner;
 
 import rolit.Board;
 import rolit.Color;
 import rolit.Player;
 import rolit.client.view.ConnectGUI;
 import rolit.client.view.GameGUI;
-import rolit.client.view.LobbyGUI;
 
 public class ClientController implements Observer, ActionListener {
 
 	private Board board;
-	private Player player;
 	
 	private ConnectGUI connectGUI;
 	private GameGUI gameGUI;
-	private LobbyGUI lobbyGUI;
 	
 	private NetworkController network;
 	
@@ -30,10 +30,6 @@ public class ClientController implements Observer, ActionListener {
 
 	public ClientController() {
 		connectGUI = new ConnectGUI(this);
-	}
-	
-	public Player getPlayer() {
-		return player;
 	}
 	
 	public void doMove(int field, Color color) {
@@ -45,6 +41,19 @@ public class ClientController implements Observer, ActionListener {
 		System.out.println(msg);
 		// TODO Auto-generated method stub
 		
+	}
+	
+	public void setColorPane(String colors) {
+		Scanner in = new Scanner(colors);
+		List<Integer> l = new ArrayList<Integer>();
+		while(in.hasNextInt()) {
+			l.add(in.nextInt());
+		}
+		in.close();
+		int[] ret = new int[l.size()];
+		  for(int i = 0;i < ret.length;i++)
+		    ret[i] = l.get(i);
+		connectGUI.setColorPane(ret);
 	}
 	
 	public void alert(String msg) {
@@ -61,28 +70,15 @@ public class ClientController implements Observer, ActionListener {
 		if(gameGUI != null) {
 			gameGUI.setVisible(false);
 		} 
-		if(lobbyGUI != null) {
-			lobbyGUI.setVisible(false);
-		}
-	}
-
-	public void connectionEstablished() {
-		connectGUI.setVisible(false);
-		
-		if(lobbyGUI == null) {
-			lobbyGUI = new LobbyGUI(this);
-		} else {
-			lobbyGUI.setVisible(true);
-		}
 	}
 	
 	public void startGame(String[] players) {
+		connectGUI.setVisible(false);
 		if(gameGUI != null) {
 			gameGUI = new GameGUI(this);
 		} else {
 			gameGUI.setVisible(true);
-		}
-		lobbyGUI.setVisible(false);		
+		}	
 	}
 
 	@Override
@@ -117,9 +113,16 @@ public class ClientController implements Observer, ActionListener {
 				network = new NetworkController(host, port, this);
 				network.connectUser(connectGUI.getName(), connectGUI.getPass());
 				network.start();
+				connectGUI.bConnect.setEnabled(false);
+				connectGUI.bSetReady.setEnabled(true);
 			}
 			
 			/** Als we een hint willen opvragen */
+		} else if(ev.getSource().equals(connectGUI.bSetReady)) {
+			connectGUI.bSetReady.setEnabled(false);
+			connectGUI.getColor().setEnabled(false);
+			int selectedColor = Color.fromString((String) connectGUI.getColor().getSelectedItem()).toInt();
+			network.sendMessage(NetworkController.COLOUR + NetworkController.DELIM + selectedColor);
 		} else if(ev.getSource().equals(gameGUI.hint)) { 
 			if (lastHint != -1) {
 				gameGUI.fields[lastHint].setBackground(Color.NONE.toColor());
@@ -152,7 +155,7 @@ public class ClientController implements Observer, ActionListener {
 	}
 
 	public void stopGame() {
-		lobbyGUI.setVisible(true);
+		connectGUI.setVisible(true);
 		gameGUI.setVisible(false);
 		gameGUI = null;
 	}

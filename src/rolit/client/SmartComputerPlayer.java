@@ -5,22 +5,28 @@ import java.util.Random;
 import rolit.Board;
 import rolit.Color;
 
-public class SmartStrategy implements Strategy {
+public class SmartComputerPlayer extends ComputerPlayer {
 
-	@Override
-	public String getName() {
-		return "Smart";
+	public SmartComputerPlayer(Color color) {
+		super(color);
 	}
 
 	@Override
-	public int determineMove(Board b, Color c) {
+	public String getName() {
+		return "SmartComputerPlayer";
+	}
+
+	@Override
+	public int determineMove(Board b) {
 		
+		Color c = getColor();
+
 		int[] qualityFields = b.getQuality(c);
 		int bestMove = 0;
 		int bestQual = 0;
-		
+
 		Random random = new Random();
-		
+
 		for (int i = 0; i < qualityFields.length; i++){
 			if(qualityFields[i] == bestQual && random.nextBoolean()) {
 				bestMove = i;
@@ -32,10 +38,9 @@ public class SmartStrategy implements Strategy {
 			//System.out.println(bestMove +" - "+ bestQual);
 		}
 		if(bestQual == 0) {
-			RandomStrategy rs = new RandomStrategy();
-			return rs.determineMove(b, c);
+			return super.determineMove(b);
 		}
-		
+
 		return bestMove;
 	}
 

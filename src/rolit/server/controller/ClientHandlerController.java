@@ -6,14 +6,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.PublicKey;
-import java.security.SecureRandom;
-import java.security.Signature;
-import java.security.SignatureException;
-import java.util.Random;
-import java.util.Scanner;
+
+import rolit.Player;
 
 
 /**
@@ -23,14 +17,15 @@ import java.util.Scanner;
  */
 public class ClientHandlerController extends Thread {
 
+	private ServerController controller;
 	private NetworkController network;
 	private Socket sock;
 	private BufferedReader in;
 	private BufferedWriter out;
-	private String username;
-	private ServerController controller;
-	private PublicKey publicKey;
-	private byte[] nonce;
+	private boolean isRunning;
+	private Player player;
+	//private PublicKey publicKey = null;
+	//private byte[] nonce;
 
 	/**
 	 * Constructs a ClientHandler object
@@ -43,6 +38,8 @@ public class ClientHandlerController extends Thread {
 		this.controller = controller;
 		in = new BufferedReader(new InputStreamReader(sock.getInputStream()));
 		out = new BufferedWriter(new OutputStreamWriter(sock.getOutputStream()));
+		isRunning = true;
+		player = new Player();
 	}
 
 	/**
@@ -55,83 +52,17 @@ public class ClientHandlerController extends Thread {
 	 */
 	public void run() {
 		try {
-			while(true) {
+			while(isRunning) {
 				String command = in.readLine();
 				if(command != null) {
-					execute(command);
+					network.execute(command, this);
 				} else {
 					shutdown();
 				}
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			shutdown();
 		}
-	}
-
-	private void execute(String command) {
-		Scanner in = new Scanner(command);
-		String cmd = in.next();
-		
-		if(cmd.equals(NetworkController.EXTENSIONSRES)) {
-			network.broadcast(NetworkController.EXTENSIONSCONFIRM + NetworkController.DELIM +"1");
-		}
-		if(cmd.equals(NetworkController.JOINREQ)) {
-			if(network.isUsernameInUse(username)) {
-				network.broadcast(NetworkController.JOINDENY + NetworkController.DELIM + "0");
-				shutdown();
-			} else {
-				this.username = in.next();
-				
-				byte[] nonce = new byte[16];
-				Random rand;
-				try {
-					rand = SecureRandom.getInstance("SHA1PRNG");
-					rand.nextBytes (nonce);
-					this.nonce = nonce;
-					network.broadcast(NetworkController.ENCODE + NetworkController.DELIM + nonce);
-				} catch (NoSuchAlgorithmException e) {
-					controller.addMessage("Algorithm Exception");
-				}
-			}
-		}
-		if(cmd.equals(NetworkController.SIGNATURE)) {
-			AuthenticationController ac = new AuthenticationController(controller, this, username);
-			ac.start();
-			boolean publicKeyRecieved = false;
-			while(!publicKeyRecieved) {
-				if(publicKey !=  null) {
-					publicKeyRecieved = true;
-					
-					byte[] signature = null ; //Signature to be checked
-
-					boolean check = false;
-					try {
-						Signature sig = Signature . getInstance (" SHA1withRSA " );
-						sig . initVerify ( publicKey );
-						sig . update ( nonce );
-						check = sig . verify ( signature );
-					} catch (NoSuchAlgorithmException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (InvalidKeyException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (SignatureException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					
-					if(check) {
-						sendMessage(NetworkController.JOINCONFIRM);
-						sendMessage(NetworkController.COLOURREQ); //TODO: nog even kijken naar welke id's vrij zijn en hoe ze hier komen
-					} else {
-						sendMessage(NetworkController.JOINDENY + NetworkController.DELIM + "1");
-					}
-				}
-			}
-		}
-		in.close();
 	}
 
 	/**
@@ -141,13 +72,13 @@ public class ClientHandlerController extends Thread {
          * and shutdown() is called.
 	 */
 	public void sendMessage(String msg) {
-		try {
-			System.out.println(msg);
-			out.write(msg + "\n");
-			out.flush();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if(msg != null) {
+			try {
+				out.write(msg + "\n");
+				out.flush();
+			} catch (IOException e) {
+				controller.addMessage("[ERROR] Couldn't send message: "+ msg);
+			}
 		}
 	}
 
@@ -158,6 +89,7 @@ public class ClientHandlerController extends Thread {
 	 */
 	public void shutdown() {
 		network.removeHandler(this);
+		isRunning = false;
 		try {
 			in.close();
 			out.close();
@@ -168,13 +100,43 @@ public class ClientHandlerController extends Thread {
 		
 	}
 	
-	public String getUsername() {
-		return (username == null) ? "" : username;
+	public Player getPlayer() {
+		return player;
 	}
 
-	public void setPublicKey(PublicKey pub) {
-		this.publicKey = pub;
-		
+	public Socket getSocket() {
+		return sock;
 	}
+
+	/*public void setPublicKey(PublicKey pub) {
+
+		System.out.println("Aan de slag");
+
+		byte[] signature = null ; //Signature to be checked
+
+		boolean check = false;
+		try {
+			Signature sig = Signature . getInstance ("SHA1withRSA" );
+			sig . initVerify ( publicKey );
+			sig . update ( nonce );
+			check = sig . verify ( signature );
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvalidKeyException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SignatureException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		if(check) {
+			sendMessage(NetworkController.JOINCONFIRM);
+			sendMessage(NetworkController.COLOURREQ); //TODO: nog even kijken naar welke id's vrij zijn en hoe ze hier komen
+		} else {
+			sendMessage(NetworkController.JOINDENY + NetworkController.DELIM + "1");
+		}
+	}*/
 
 } // end of class ClientHandler

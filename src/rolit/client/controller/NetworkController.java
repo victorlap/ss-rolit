@@ -15,8 +15,6 @@ import java.security.Signature;
 import java.security.SignatureException;
 import java.util.Scanner;
 
-import rolit.Color;
-
 public class NetworkController extends Thread {
 	
 	public static final String EXTENSIONS 			= "Extensions";
@@ -52,6 +50,7 @@ public class NetworkController extends Thread {
 	private String user;
 	private PrivateKey privateKey;
 	private AuthenticationController ac;
+	private boolean isRunning;
 
 	/**
 	 * Constructs a Client-object and tries to make a socket connection
@@ -62,6 +61,8 @@ public class NetworkController extends Thread {
 		this.controller = controller;
 		this.host = host;
 		this.port = port;
+		isRunning = true;
+		
 	}
 
 	/**
@@ -75,7 +76,7 @@ public class NetworkController extends Thread {
 			in = new BufferedReader(new InputStreamReader(sock.getInputStream()));
 			out = new BufferedWriter(new OutputStreamWriter(sock.getOutputStream()));
 
-			while(true) {
+			while(isRunning) {
 				if(in.ready()) {
 					String command = in.readLine();
 					if(command != null) {
@@ -93,6 +94,7 @@ public class NetworkController extends Thread {
 	/** send a message to a ClientHandler. */
 	public void sendMessage(String msg) {
 		try {
+			System.out.println(msg);
 			out.write(msg + "\n");
 			out.flush();
 		} catch (IOException e) {
@@ -113,6 +115,7 @@ public class NetworkController extends Thread {
 	/** close the socket connection. */
 	public void shutdown() {
 		System.out.println("SHUTDOWN");
+		isRunning = false;
 		try {
 			in.close();
 			out.close();
@@ -148,12 +151,12 @@ public class NetworkController extends Thread {
 					String message = in.next();
 					
 					try {
-						Signature sig = Signature . getInstance (" SHA1withRSA " );
+						Signature sig = Signature . getInstance ("SHA1withRSA" );
 						sig . initSign ( privateKey );
 						sig . update ( message . getBytes ());
 						byte[] signature = sig . sign ();
 						
-						sendMessage(SIGNATURE + DELIM + signature.toString());
+						sendMessage(SIGNATURE + DELIM + new String(signature));
 					} catch (NoSuchAlgorithmException e) {
 						controller.alert("Algorithm not defined!");
 					} catch (InvalidKeyException e) {
@@ -165,13 +168,14 @@ public class NetworkController extends Thread {
 			}
 		}
 		else if(cmd.equals(JOINCONFIRM)) {
-			controller.connectionEstablished();
+			//controller.connectionEstablished();
 			// TODO: JoinConfirm;
 		}
 		else if(cmd.equals(JOINDENY)) {
 			if(in.hasNext()) {
 				String temp = in.next();
 				if(temp.equals("0")) { // Nickname is al aanwezig op de server
+					controller.alert("Nickname already in use");
 
 				}
 				if(temp.equals("1")) { // Signature is niet goed; Probeer het opniew;
@@ -180,8 +184,9 @@ public class NetworkController extends Thread {
 			}
 		}
 		else if(cmd.equals(COLOURREQ)) {
-			//TODO: Afhandelen welke kleur je wilt zijn;
-			sendMessage(COLOUR + DELIM + Color.RED.toInt());
+			//TODO: Afhandelen welke kleur je wilt zijn;\
+			controller.setColorPane(in.nextLine());
+			//sendMessage(COLOUR + DELIM + Color.RED.toInt());
 		}
 		else if(cmd.equals(COLOURDENY)) {
 			// TODO: AFwachten op fb;
@@ -220,8 +225,8 @@ public class NetworkController extends Thread {
 	public void connectUser(String name, String pass) {
 		this.user = name;
 		System.out.println(name + "" +pass);
-		ac = new AuthenticationController(controller, this, name, pass);
-		ac.start();	
+//		ac = new AuthenticationController(controller, this, name, pass);
+//		ac.start();	
 		
 	}
 }

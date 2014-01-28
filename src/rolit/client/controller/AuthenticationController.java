@@ -65,12 +65,12 @@ public class AuthenticationController extends Thread {
 					if(command != null) {
 						execute(command);
 					} else {
-						network.shutdown();
+						shutdown();
 					}
 				}
 			}
 		} catch (IOException e) {
-			network.shutdown();
+			shutdown();
 		}
 	}
 
@@ -87,7 +87,7 @@ public class AuthenticationController extends Thread {
 			PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec ( DatatypeConverter.parseBase64Binary(in.next()) );
 			PrivateKey priv = null;
 			try {
-				KeyFactory fact = KeyFactory . getInstance (" RSA " );
+				KeyFactory fact = KeyFactory . getInstance ("RSA");
 				priv = fact . generatePrivate ( keySpec );
 			} catch (NoSuchAlgorithmException e) {
 				// TODO Auto-generated catch block
@@ -99,6 +99,7 @@ public class AuthenticationController extends Thread {
 
 			if(priv != null) {
 				network.setPrivateKey(priv);
+				shutdown();
 			} else {
 				controller.alert("Something went wrong while trying to obtain private key. Please try again.");
 			}
