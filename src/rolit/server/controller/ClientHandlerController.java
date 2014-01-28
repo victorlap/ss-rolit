@@ -73,12 +73,12 @@ public class ClientHandlerController extends Thread {
 		Scanner in = new Scanner(command);
 		String cmd = in.next();
 		
-		if(cmd.equals("ExtensionsRes")) {
-			network.broadcast("ExtensionsConfirm 1");
+		if(cmd.equals(NetworkController.EXTENSIONSRES)) {
+			network.broadcast(NetworkController.EXTENSIONSCONFIRM + NetworkController.DELIM +"1");
 		}
-		if(cmd.equals("JoinReq")) {
+		if(cmd.equals(NetworkController.JOINREQ)) {
 			if(network.isUsernameInUse(username)) {
-				network.broadcast("JoinDeny 0");
+				network.broadcast(NetworkController.JOINDENY + NetworkController.DELIM + "0");
 				shutdown();
 			} else {
 				this.username = in.next();
@@ -89,13 +89,13 @@ public class ClientHandlerController extends Thread {
 					rand = SecureRandom.getInstance("SHA1PRNG");
 					rand.nextBytes (nonce);
 					this.nonce = nonce;
-					network.broadcast("Encode "+ nonce);
+					network.broadcast(NetworkController.ENCODE + NetworkController.DELIM + nonce);
 				} catch (NoSuchAlgorithmException e) {
 					controller.addMessage("Algorithm Exception");
 				}
 			}
 		}
-		if(cmd.equals("Signature")) {
+		if(cmd.equals(NetworkController.SIGNATURE)) {
 			AuthenticationController ac = new AuthenticationController(controller, this, username);
 			ac.start();
 			boolean publicKeyRecieved = false;
@@ -123,13 +123,11 @@ public class ClientHandlerController extends Thread {
 					}
 					
 					if(check) {
-						sendMessage("JoinConfirm");
-						sendMessage("ColourReq"); //TODO: nog even kijken naar welke id's vrij zijn en hoe ze hier komen
+						sendMessage(NetworkController.JOINCONFIRM);
+						sendMessage(NetworkController.COLOURREQ); //TODO: nog even kijken naar welke id's vrij zijn en hoe ze hier komen
 					} else {
-						sendMessage("JoinDeny 1");
+						sendMessage(NetworkController.JOINDENY + NetworkController.DELIM + "1");
 					}
-					
-
 				}
 			}
 		}
@@ -144,7 +142,7 @@ public class ClientHandlerController extends Thread {
 	 */
 	public void sendMessage(String msg) {
 		try {
-			System.out.println("[NEW MSG] " + msg);
+			System.out.println(msg);
 			out.write(msg + "\n");
 			out.flush();
 		} catch (IOException e) {
@@ -171,7 +169,7 @@ public class ClientHandlerController extends Thread {
 	}
 	
 	public String getUsername() {
-		return username;
+		return (username == null) ? "" : username;
 	}
 
 	public void setPublicKey(PublicKey pub) {

@@ -87,7 +87,7 @@ public class ClientController implements Observer, ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent ev) {
-		/** Als we willen connecten met de server */
+		/* Als we willen connecten met de server */
 		if(connectGUI != null && ev.getSource() == connectGUI.bConnect) {
 			addMessage("Connecting to the server..");
 			InetAddress host;
@@ -113,7 +113,7 @@ public class ClientController implements Observer, ActionListener {
 				if(name.equals("")) {
 					name = "NoName";
 				}
-				
+				System.out.println(connectGUI.getPass());
 				network = new NetworkController(host, port, this);
 				network.connectUser(connectGUI.getName(), connectGUI.getPass());
 				network.start();

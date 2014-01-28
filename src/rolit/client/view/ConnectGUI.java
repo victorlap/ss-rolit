@@ -30,7 +30,7 @@ public class ConnectGUI extends JFrame {
 	private JTextField tfPort;
 	private JTextField tfName;
 	private JTextField tfHost;
-	private JPasswordField tfPass;
+	private JTextField tfPass;
 	private ClientController controller;
 
 	/** Constructs a ServerGUI object. 
@@ -66,7 +66,7 @@ public class ConnectGUI extends JFrame {
 	}
 	
 	public String getPass() {
-		return tfPass.getPassword().toString();
+		return tfPass.getText();
 	}
 
 	/** builds the GUI. */

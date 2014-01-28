@@ -8,6 +8,19 @@ import java.util.Collection;
 
 
 public class NetworkController extends Thread {
+	
+	public static final String EXTENSIONS 			= "Extensions";
+	public static final String EXTENSIONSRES 		= "ExtensionsRes";
+	public static final String EXTENSIONSCONFIRM 	= "ExtensionsConfirm";
+	public static final String COLOURREQ 			= "ColourReq";
+	public static final String JOINREQ 				= "JoinReq";
+	public static final String JOINCONFIRM 			= "JoinConfirm";
+	public static final String JOINDENY 			= "JoinDeny";
+	public static final String ENCODE 				= "Encode";
+	public static final String SIGNATURE 			= "Signature";
+	public static final String DELIM 				= " ";
+	
+	
 	private int port;
 	private ServerSocket ss;
 	private Collection<ClientHandlerController> threads;
@@ -40,7 +53,7 @@ public class NetworkController extends Thread {
 				ClientHandlerController newHandler = new ClientHandlerController(this, newSocket, controller);
 				controller.addMessage("Trying to connect to new Client");
 				addHandler(newHandler);
-				newHandler.sendMessage("Extensions");
+				newHandler.sendMessage(EXTENSIONS);
 			} catch(IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
