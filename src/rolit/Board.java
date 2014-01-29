@@ -395,20 +395,20 @@ public class Board extends Observable {
 	 * @param color
 	 * @return <code>true</code> if the color has the most fields
 	 */ 
-	private boolean hasMostFields(Color color) {
+	public boolean hasMostFields(Color color) {
 		int green = countFields(Color.GREEN);
 		int blue = countFields(Color.GREEN);
 		int yellow = countFields(Color.GREEN);
 		int red = countFields(Color.GREEN);
 
 		if(color == Color.RED) {
-			return red > green && red > blue && red > yellow;
+			return red >= green && red >= blue && red >= yellow;
 		} else if(color == Color.BLUE) {
-			return blue > green && blue > red && blue > yellow;
+			return blue >= green && blue >= red && blue >= yellow;
 		} else if(color == Color.GREEN) {
-			return green > red && green > blue && green > yellow;
+			return green >= red && green >= blue && green >= yellow;
 		} else {
-			return yellow > green && yellow > blue && yellow > red;
+			return yellow >= green && yellow >= blue && yellow >= red;
 		}
 	}
 
