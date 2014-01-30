@@ -105,7 +105,9 @@ public class BoardTest {
 	public void doIllegalMove(){
 		beginTest("doIllegalMove");
 		if (b.isEmptyField(0, 0) && b.isEmptyField(0, 1) && b.isEmptyField(1, 0) && b.isEmptyField(1, 1)){
-			b.doMove(0, Color.RED);
+			if (b.checkMove(0, Color.RED)){
+				b.setField(0, Color.RED);
+			}
 		}
 		assertEquals("Test if illegal moves are denied", b.getField(0), Color.NONE);
 	}
