@@ -164,7 +164,7 @@ public class Game {
 	
 	/**
 	 * Returns a string with the colors that can be chosen according to the AMULET protocol
-	 * @return
+	 * @return String
 	 */
 	public String freeColorString() {
 		ArrayList<Color> colors = new ArrayList<Color>();
@@ -190,7 +190,7 @@ public class Game {
 	/**
 	 * Checks if the color is in use
 	 * @param color
-	 * @return
+	 * @return true if color is in use
 	 */
 	public boolean isColorInUse(Color color) {
 		for(Player player : players) {
@@ -204,7 +204,7 @@ public class Game {
 	/**
 	 * Returns the player for its color
 	 * @param c color
-	 * @return
+	 * @return player
 	 */
 	public Player getPlayerByColor(Color c) {
 		for(Player player : players) {
@@ -217,7 +217,7 @@ public class Game {
 
 	/**
 	 * Returns a string representative of the Players who are in the game, according to the AMULET protocol
-	 * @return
+	 * @return String
 	 */
 	public String getPlayerString() {
 		String result;
@@ -255,7 +255,7 @@ public class Game {
 
 	/**
 	 * Checks if the game is ready to start
-	 * @return
+	 * @return true if game is ready to start
 	 */
 	public boolean readyToStart() {
 		if(players.size() < 2) {
@@ -280,7 +280,7 @@ public class Game {
 
 	/**
 	 * Checks if the game has ended
-	 * @return
+	 * @return true if game is over
 	 */
 	public boolean gameOver() {
 		System.out.println(board);

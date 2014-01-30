@@ -85,7 +85,7 @@ public class NetworkController extends Thread {
 	/**
 	 * Checks if there is already someone with that username logged in to the server
 	 * @param username
-	 * @return
+	 * @return true if username is in use
 	 */
 	public boolean isUsernameInUse(String username) {
 		for(ClientHandlerController handler : threads) {
@@ -99,7 +99,7 @@ public class NetworkController extends Thread {
 	/**
 	 * Checks if the player already is in a game
 	 * @param player
-	 * @return
+	 * @return <code>true</code> if player is in the game
 	 */
 	public boolean isInGame(Player player) {
 		for(Game game : games) {
@@ -154,7 +154,7 @@ public class NetworkController extends Thread {
 	/**
 	 * Returns a free game if there is one available.
 	 * If not it returns a new Game;
-	 * @return
+	 * @return Game
 	 */
 	public Game getFreeGame() {
 		for(Game game : games) {
