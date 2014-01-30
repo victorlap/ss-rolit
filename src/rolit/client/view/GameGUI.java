@@ -8,6 +8,7 @@ import java.awt.event.WindowListener;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 
 import rolit.Board;
 import rolit.Color;
@@ -21,7 +22,6 @@ public class GameGUI extends JFrame implements WindowListener {
 	private static final long serialVersionUID = -6726007787663909268L;
 	
 	private ClientController controller;
-	public Color current = Color.RED;
 	
 	public JButton[] fields = new JButton[Board.DIM * Board.DIM];
 	public JButton hint = new JButton();
@@ -29,6 +29,7 @@ public class GameGUI extends JFrame implements WindowListener {
 	public JLabel jtext = new JLabel();
 	public JLabel scores = new JLabel();
 	public JButton ddos = new JButton();
+	public JButton restart = new JButton();
 
 	// -------- CONSTRUCTORS --------
 	public GameGUI(ClientController controller) {
@@ -40,6 +41,7 @@ public class GameGUI extends JFrame implements WindowListener {
 		
 		setVisible(true);
 		
+		controller.board.init();
 		addWindowListener(this);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 	}
@@ -48,19 +50,19 @@ public class GameGUI extends JFrame implements WindowListener {
 		setLayout(new GridBagLayout());
 		GridBagConstraints gbc = new GridBagConstraints();
 
-		setSize(600, 300);
+		setSize(400, 300);
 		
 		gbc.weightx = 1;
 		gbc.weighty = 1;
 		//gbc.gridx = Board.DIM;
 		gbc.gridy = Board.DIM;
-		gbc.gridwidth = (Board.DIM -4) / 2;
+		gbc.gridwidth = (Board.DIM -6);
 		
-		jtext.setText(current.toString());
+		//jtext.setText(current.toString());
 		add(jtext, gbc);
 		
-		scores.setText("");
-		add(scores, gbc);
+		/*scores.setText("");
+		add(scores, gbc);*/
 		
 		gbc.gridx = Board.DIM-4;
 		gbc.gridwidth = 2;
@@ -104,6 +106,11 @@ public class GameGUI extends JFrame implements WindowListener {
 	@Override
 	public void windowClosing(WindowEvent e) {
 		controller.stopGame();
+	}
+	
+	public int showPlayAgain() {
+		return JOptionPane.showConfirmDialog(null,
+				"Start Again?", "Would you like to start again?", JOptionPane.YES_NO_OPTION);
 	}
 
 	@Override

@@ -1,4 +1,4 @@
-package rolit.client.controller;
+/*package rolit.client.controller;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -113,7 +113,8 @@ public class AuthenticationController extends Thread {
 			out.close();
 			sock.close();
 		} catch (IOException e) {
-			/* Doesn't matter */
+			 Doesn't matter 
 		}
 	}
 }
+*/

@@ -30,10 +30,11 @@ public class ConnectGUI extends JFrame {
 
 	public JButton bConnect;
 	public JButton bSetReady;
+	public JButton bReady;
 	private JTextField tfPort;
 	private JTextField tfName;
 	private JTextField tfHost;
-	private JTextField tfPass;
+	//private JTextField tfPass;
 	public JTextArea tfLobby;
 	private JComboBox<String> cbColor;
 	private ClientController controller;
@@ -70,11 +71,17 @@ public class ConnectGUI extends JFrame {
 	}
 	
 	public String getPass() {
-		return tfPass.getText();
+		//return tfPass.getText();
+		
+		return "";
 	}
 	
 	public JComboBox<String> getColor() {
 		return cbColor;
+	}
+	
+	public JButton getReady() {
+		return bReady;
 	}
 
 	/** builds the GUI. */
@@ -86,7 +93,7 @@ public class ConnectGUI extends JFrame {
 
 		JPanel p1 = new JPanel(new FlowLayout());
 		JPanel pp = new JPanel(new GridLayout(5,2));
-		JPanel p2 = new JPanel(new GridLayout(2,1));
+		JPanel p2 = new JPanel(new GridLayout(3,1));
 
 		JLabel lbAddress = new JLabel("Address: ");
 		tfHost = new JTextField(getHostAddress(), 12);
@@ -95,10 +102,10 @@ public class ConnectGUI extends JFrame {
 		tfPort = new JTextField("1337", 5);
 
 		JLabel lbName = new JLabel("Name:");
-		tfName = new JTextField("player_test1", 5);
+		tfName = new JTextField("player1", 5);
 		
-		JLabel lbPass = new JLabel("Password:");
-		tfPass = new JTextField("test1", 5);
+		/*JLabel lbPass = new JLabel("Password:");
+		tfPass = new JTextField("test1", 5);*/
 		
 		JLabel lbColor = new JLabel("Color:");
 		cbColor = new JComboBox<String>();
@@ -114,8 +121,8 @@ public class ConnectGUI extends JFrame {
 		pp.add(lbName);
 		pp.add(tfName);
 		
-		pp.add(lbPass);
-		pp.add(tfPass);
+//		pp.add(lbPass);
+//		pp.add(tfPass);
 		
 		pp.add(lbColor);
 		pp.add(cbColor);
@@ -124,10 +131,14 @@ public class ConnectGUI extends JFrame {
 		bConnect.addActionListener(controller);
 		p2.add(bConnect);
 		
-		bSetReady = new JButton("Ready");
+		bSetReady = new JButton("Choose color");
 		bSetReady.addActionListener(controller);
 		bSetReady.setEnabled(false);
 		p2.add(bSetReady);
+		
+		bReady = new JButton("Ready");
+		bReady.addActionListener(controller);
+		p2.add(bReady);
 		
 		tfLobby = new JTextArea("", 7, 25);
 		tfLobby.setEditable(false);
@@ -148,7 +159,7 @@ public class ConnectGUI extends JFrame {
 	
 	public void setColorPane(int[] colors) {
 		for(int i = 0; i < colors.length; i++) {
-			cbColor.addItem(Color.fromInt(i).toString());
+			cbColor.addItem(Color.fromInt(colors[i]).toString());
 		}
 		cbColor.setEnabled(true);
 	}

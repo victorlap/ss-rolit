@@ -12,6 +12,7 @@ public class Player {
 	private String name;
     private Color color;
     private boolean takesPart;
+    private boolean isReady;
     
     /**
      * Constructs a new Player object and defines the name.
@@ -21,6 +22,13 @@ public class Player {
     	color = Color.NONE;
     }
     
+    public boolean isReady() {
+    	return isReady;
+    }
+    
+    public void setReady(boolean ready) {
+    	isReady = ready;
+    }
     public void setName(String name) {
 		this.name = name;
 	}
@@ -56,6 +64,11 @@ public class Player {
      */
     public boolean isTakingPart() {
     	return takesPart;
+    }
+    
+    @Override
+    public String toString() {
+    	return name +" : " + color;
     }
  
 }

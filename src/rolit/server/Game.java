@@ -6,6 +6,7 @@ import java.util.Collection;
 import rolit.Board;
 import rolit.Color;
 import rolit.Player;
+import rolit.server.controller.NetworkController;
 
 
 /**
@@ -28,13 +29,15 @@ public class Game {
 	 * The Board
 	 */
 	private Board board;
-	
+	private NetworkController controller;
 	private boolean isRunning;
 
 	/**
 	 * The array of players
 	 */
-	private Collection<Player> players;
+	private ArrayList<Player> players;
+	
+	private int count = 0;
 
 	/**
 	 * Saves array index of current player
@@ -46,9 +49,10 @@ public class Game {
 	/**
 	 * Creates a new Game from the <code>players</code> array.
 	 */
-	public Game() {
+	public Game(NetworkController networkController) {
 		board = new Board();
 		players = new ArrayList<Player>();
+		controller = networkController;
 	}
 
 	//----------- METHODS ---------
@@ -65,21 +69,42 @@ public class Game {
 	 * Start the game i.e. let players make a move and pass the current turn to the next player.
 	 */
 	public void start() {
+		board.init();
 		isRunning = true;
 		currentPlayer = randomPlayer();
-		while (!board.gameOver()) {
-            //players[currentPlayer].makeMove(board);
-            currentPlayer = (currentPlayer + 1) % players.size();
-        }
+		nextTurn();
 	}
 	
 	public int getAmountOfPlayer() {
 		return players.size();
 	}
-
-	public void doMove(int field, Color color) {
-		// TODO Auto-generated method stub
+	
+	public void nextTurn() {
+		controller.broadcast(NetworkController.TURN + NetworkController.DELIM + count + NetworkController.DELIM + currentPlayer);
+		count++;
 		
+	}
+	
+	
+	public int getTurn() {
+		return count;
+	}
+	public void nextPlayer() {
+		currentPlayer = (currentPlayer + 1) % players.size();
+		System.out.println(currentPlayer);
+		while(players.get(currentPlayer).getColor() == Color.NONE) {
+			currentPlayer = (currentPlayer + 1) % players.size();
+		}
+	}
+
+	public void doMove(int col, int row, Color color) throws NullPointerException {
+		System.out.println(color.toString() + currentPlayer);
+		if(currentPlayer != color.toInt()) {
+			throw new NullPointerException();
+		}
+		board.doMove(col, row , color);
+		nextPlayer();
+		nextTurn();
 	}
 	
 	public void addPlayer(Player newPlayer) {
@@ -96,16 +121,10 @@ public class Game {
 	
 	public String freeColorString() {
 		ArrayList<Color> colors = new ArrayList<Color>();
-		if(players.size() <= 2) {
-			colors.add(Color.RED);
-			colors.add(Color.YELLOW);
-		}
-		if(players.size() > 2 && players.size() <= 4) {
-			colors.add(Color.GREEN);
-		}
-		if(players.size() == 4) {
-			colors.add(Color.BLUE);
-		}
+		colors.add(Color.RED);
+		colors.add(Color.YELLOW);
+		colors.add(Color.GREEN);
+		colors.add(Color.BLUE);
 		String result = "";
 		for(Color c : colors) {
 			boolean canAdd = true;
@@ -129,6 +148,7 @@ public class Game {
 		}
 		return false;
 	}
+	
 	
 	public Player getPlayerByColor(Color c) {
 		for(Player player : players) {
@@ -164,6 +184,36 @@ public class Game {
 		return result;
 	}
 
+	public void removePlayer(Player player) {
+		players.remove(player);
+		
+	}
+
+	public boolean readyToStart() {
+		if(players.size() < 2) {
+			return false;
+		}
+		for(Player player : players) {
+			if(!player.isReady()) {
+				return false;
+			}
+		}
+		return true;
+	}
+	@Override
+	public String toString() {
+		String result = "";
+		for(Player player : players) {
+			result = result + player + "\n";
+		}
+		return result;
+	}
+
+	public boolean gameOver() {
+		System.out.println(board);
+		return board.isFull();
+		
+	}
 
 
 }

@@ -171,6 +171,7 @@ public class BoardTest {
 		for (int i = 0; i < Board.DIM*Board.DIM; i++) {
 			if (!b.getField(i).equals(b.getField(b.indexToCol(i), b.indexToRow(i)))){
 				foundMistake = true;
+				break;
 			}
 		}
 		

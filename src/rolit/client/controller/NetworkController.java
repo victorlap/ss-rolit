@@ -8,16 +8,13 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
-import java.security.Signature;
-import java.security.SignatureException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import rolit.Board;
 import rolit.Color;
 import rolit.Player;
+import rolit.client.SmartComputerPlayer;
 
 public class NetworkController extends Thread {
 	
@@ -43,6 +40,7 @@ public class NetworkController extends Thread {
 	public static final String JOINDENY 			= "JoinDeny";
 	public static final String ENCODE 				= "Encode";
 	public static final String SIGNATURE 			= "Signature";
+	public static final String READY				= "Ready";
 	public static final String DELIM 				= " ";
 
 	private ClientController controller;
@@ -52,8 +50,8 @@ public class NetworkController extends Thread {
 	private InetAddress host;
 	private int port;
 	private String user;
-	private PrivateKey privateKey;
-	private AuthenticationController ac;
+	//private PrivateKey privateKey;
+	//private AuthenticationController ac;
 	private boolean isRunning;
 
 	/**
@@ -124,9 +122,9 @@ public class NetworkController extends Thread {
 			in.close();
 			out.close();
 			sock.close();
-			if(ac !=  null) {
+			/*if(ac !=  null) {
 				ac.shutdown();
-			}
+			}*/
 		} catch (NullPointerException e) {
 			controller.alert("Could not connect to server!");
 		} catch (IOException e) {
@@ -139,7 +137,7 @@ public class NetworkController extends Thread {
 	private void execute(String line) {
 		Scanner in = new Scanner(line);
 		String cmd = in.next();
-
+System.out.println(line);
 		if(cmd.equals(EXTENSIONS)) {
 			sendMessage(EXTENSIONSRES + DELIM +"1");
 		}
@@ -148,7 +146,8 @@ public class NetworkController extends Thread {
 			sendMessage(JOINREQ + DELIM + user);
 		}
 		else if(cmd.equals(ENCODE)) { // Beveiliging gedoe
-			boolean privateKeyRecieved = false;
+			sendMessage(SIGNATURE + DELIM + "randoms"); /** Voor de servers die authenticatie requiren */
+			/*boolean privateKeyRecieved = false;
 			while(!privateKeyRecieved) {
 				if(privateKey !=  null) {
 					privateKeyRecieved = true;
@@ -169,18 +168,18 @@ public class NetworkController extends Thread {
 						controller.alert("Couldn't create signature!");
 					}
 				}
-			}
+			}*/
 		}
 		else if(cmd.equals(JOINCONFIRM)) {
+			controller.getPlayer().setName(user);
 			//controller.connectionEstablished();
 			// TODO: JoinConfirm;
 		}
 		else if(cmd.equals(JOINDENY)) {
-			if(in.hasNext()) {
+			if(in.hasNext() && controller.getPlayer().getName() != null) {
 				String temp = in.next();
-				if(temp.equals("0")) { // Nickname is al aanwezig op de server
+				if(temp.equals("0") && temp.equals(user)) { // Nickname is al aanwezig op de server
 					controller.alert("Nickname already in use");
-
 				}
 				if(temp.equals("1")) { // Signature is niet goed; Probeer het opniew;
 					execute(ENCODE);
@@ -189,56 +188,93 @@ public class NetworkController extends Thread {
 		}
 		else if(cmd.equals(COLOURREQ)) {
 			controller.setColorPane(in.nextLine());
+			//sendMessage(COLOUR + DELIM + "1");
+			//sendMessage(READY);
 		}
-		else if(cmd.equals(COLOURDENY)) {
-			controller.connectGUI.bSetReady.setEnabled(false);
-			controller.connectGUI.getColor().setEnabled(false);
+		else if(cmd.equals(COLOURDENY) && controller.getPlayer().getColor() != Color.NONE) {
+		/*	controller.connectGUI.bSetReady.setEnabled(true);
+			controller.connectGUI.getColor().setEnabled(true);*/
 			controller.alert("Color already in use");
 		}
 		else if(cmd.equals(NOTIFYNEWPLAYER)) {
-			ArrayList<Player> players = new ArrayList<Player>();
+			controller.getPlayer().setName(user);
+			controller.setPlayers(new ArrayList<Player>());
+			controller.getPlayer().setReady(true);
 			int i = 0;
 			while(in.hasNext()) {
 				Player player = new Player();
 				player.setName(in.next());
 				player.setColor(Color.fromInt(i));
-				players.add(player);
+				controller.getPlayers().add(player);
 				i++;
 			}
-			controller.setLobby(players);
+			controller.setLobby(controller.getPlayers());
+			/*if(controller.getPlayer().getColor() != Color.NONE) 
+				sendMessage(READY);*/
 			// Er is een nieuwe speler, voeg hem toe aan de array en speel er op los
 		}
 		else if(cmd.equals(GAMESTART)) {
-			// READY; SET; GO!
+			controller.setPlayers(new ArrayList<Player>());
+			int i = 0;
+			while(in.hasNext()) {
+				Player player = new Player();
+				player.setName(in.next());
+				player.setColor(Color.fromInt(i));
+				controller.getPlayers().add(player);
+				i++;
+			}
+			controller.startGame(controller.getPlayers());
 		}
 		else if(cmd.equals(TURN)) { // We zijn aan de beurt
+			in.nextInt(); // MOVENUMBER
+			int playerno = in.nextInt();
 
+				controller.gameGUI.jtext.setText("Turn: "+ Color.fromInt(playerno));
+				controller.gameGUI.repaint();
+
+			//int playerno = 1;
+			
+			if((controller.getPlayer().getName().equals("AI") || controller.getPlayer().getName().equals("AI2")) && Color.fromInt(playerno) == controller.getPlayer().getColor()) {
+				SmartComputerPlayer scp = new SmartComputerPlayer(controller.getPlayer().getColor());
+				int field = scp.determineMove(controller.getBoard());
+				sendMessage(MOVE + DELIM + playerno + DELIM + Board.indexToCol(field) + DELIM + Board.indexToRow(field));
+			}
 		}
 		else if(cmd.equals(MOVEDENY)) { // Whoops kan niet
-
+			//execute(TURN + DELIM + "0" + DELIM + controller.getPlayer().getColor().toInt());
 		}
 		else if(cmd.equals(NOTIFYMOVE)) { // Een andere speler heeft een move gedaan
-
+			Color c = Color.fromInt(in.nextInt());
+			int col = in.nextInt();
+			int row = in.nextInt();
+			controller.doMove(Board.index(col, row), c);
 		}
 		else if(cmd.equals(GAMEEND)) { // Nu alweer af??
-
+			try {
+				Thread.sleep(5000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			controller.gameEnded();
 		}
 		else if(cmd.equals(LOSSPLAYER)) { // We zijn iemand kwijt
-
+			controller.stopGame();
 		}
-		else if(cmd.equals(LEADRETURN)) { // We hebben een leaderboard opgevraagd, en nu komt het allemaal hierheen
+		/*else if(cmd.equals(LEADRETURN)) { // We hebben een leaderboard opgevraagd, en nu komt het allemaal hierheen
 			// We doen niet aan leaderboard;
-		}
+		}*/
 		in.close();
 	}
 	
-	public void setPrivateKey(PrivateKey priv) {
+	/*public void setPrivateKey(PrivateKey priv) {
 		this.privateKey = priv;
-	}
+	}*/
 
 	public void connectUser(String name, String pass) {
 		this.user = name;
-		System.out.println(name + "" +pass);
+//		System.out.println(name + "" +pass);
 //		ac = new AuthenticationController(controller, this, name, pass);
 //		ac.start();	
 		

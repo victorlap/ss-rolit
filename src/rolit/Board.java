@@ -16,8 +16,6 @@ public class Board extends Observable {
 	
 	public static final int DIM = 8; // MUST BE EVEN AND >2
 	
-	public int lastChangedField;
-
 	/**
 	 * The DIM by DIM fields of the Tic Tac Toe board. See NUMBERING for the
 	 * coding of the fields.z
@@ -62,7 +60,7 @@ public class Board extends Observable {
 	 * @param col of the desired field
 	 * @return <b>int</b> with the index of the field
 	 */
-	public int index(int col, int row) {
+	public static int index(int col, int row) {
 		return DIM * row + col;
 	}
 	
@@ -71,7 +69,7 @@ public class Board extends Observable {
 	 * @param index
 	 * @return int of the col
 	 */
-	public int indexToCol(int index) {
+	public static int indexToCol(int index) {
 		return index % DIM;
 	}
 	
@@ -80,7 +78,7 @@ public class Board extends Observable {
 	 * @param index
 	 * @return <code>int</code> of the row
 	 */
-	public int indexToRow(int index) {
+	public static int indexToRow(int index) {
 		return index / DIM;
 	}
 	
@@ -129,7 +127,6 @@ public class Board extends Observable {
 	 */
 	public void setField(int field, Color color) {
 		fields[field] = color;
-		lastChangedField = field;
 		setChanged();
 		notifyObservers();
 	}
@@ -166,10 +163,10 @@ public class Board extends Observable {
 	 * @return <code>true</code> if the game has a winner
 	 */
 	public boolean hasWinner() {
-		return isWinner(Color.GREEN) || 
+		return ( isWinner(Color.GREEN) || 
 				isWinner(Color.RED)  || 
 				isWinner(Color.BLUE) || 
-				isWinner(Color.YELLOW);
+				isWinner(Color.YELLOW) ) && isFull();
 	}
 	
 	/**
@@ -203,7 +200,7 @@ public class Board extends Observable {
 	 * @param color to change the field to.
 	 */
 	public void doMove(int field, Color color) {
-		if(checkMove(field, color)) {
+		//if(checkMove(field, color)) {
 			setField(field, color);
 			
 			/** Fills the fields lying between an existing field with the same color, 
@@ -302,7 +299,7 @@ public class Board extends Observable {
 				}
 			}
 			
-		} 
+		//} 
 		
 	}
 
@@ -649,4 +646,21 @@ public class Board extends Observable {
 	private boolean onBoard(int field) {
 		return field >= 0 && field < DIM*DIM;
 	}
+	
+	 public String toString() {
+         String result = "\n";
+         
+         for(int i = 0; i < fields.length; i++){
+                 result = result + " | " + fields[i];
+                 if(i != 0 && (i % DIM) == DIM - 1) {
+                         result = result + " |\n ";
+                         for(int j = 0; j < DIM ; j++) {
+                                 result = result + "----";
+                         }
+                         result = result + "-\n";
+                 }
+         }
+         
+         return result;
+ }
 }

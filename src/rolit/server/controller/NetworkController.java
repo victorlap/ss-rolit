@@ -36,6 +36,7 @@ public class NetworkController extends Thread {
 	public static final String JOINDENY 			= "JoinDeny";
 	public static final String ENCODE 				= "Encode";
 	public static final String SIGNATURE 			= "Signature";
+	public static final String READY				= "Ready";
 	public static final String DELIM 				= " ";
 	
 	
@@ -55,9 +56,9 @@ public class NetworkController extends Thread {
 
 	/**
 	 * Listens to a port of this Server if there are any Clients that 
-         * would like to connect. For every new socket connection a new
-         * ClientHandler thread is started that takes care of the further
-         * communication with the Client. 
+	 * would like to connect. For every new socket connection a new
+	 * ClientHandler thread is started that takes care of the further
+	 * communication with the Client. 
 	 */
 	public void run() {
 		try {
@@ -74,6 +75,8 @@ public class NetworkController extends Thread {
 				newHandler.sendMessage(EXTENSIONS);
 			}	
 		} catch (IOException e) {
+			controller.serverGUI.bConnect.setVisible(true);
+			controller.serverGUI.getPort().setVisible(true);
 			controller.addMessage("Server couldn't start because the port is not available");
 		}
 	}
@@ -133,6 +136,7 @@ public class NetworkController extends Thread {
 	 * @param handler ClientHandler that will be removed
 	 */
 	public void removeHandler(ClientHandlerController handler) {
+		getGame(handler.getPlayer()).removePlayer(handler.getPlayer());
 		threads.remove(handler);
 	}
 	
@@ -142,7 +146,7 @@ public class NetworkController extends Thread {
 				return game;
 			}
 		}
-		Game newGame = new Game();
+		Game newGame = new Game(this);
 		games.add(newGame);
 		return newGame;
 	}
@@ -190,14 +194,14 @@ public class NetworkController extends Thread {
 				if(!isUsernameInUse(next)) {
 					sender.getPlayer().setName(next);
 					controller.addMessage("Connection "+ sender.getSocket().getInetAddress() + " has identified itself as: "+ sender.getPlayer().getName());
-					broadcast(JOINCONFIRM);
-					System.out.println("0");
+					broadcast(JOINCONFIRM, sender);
+					//System.out.println("0");
 					Game game = getFreeGame();
-					System.out.println("1");
+					//System.out.println("1");
 					game.addPlayer(sender.getPlayer());
-					System.out.println("2");
-					broadcast(COLOURREQ + game.freeColorString());
-					System.out.println("3");
+					//System.out.println("2");
+					broadcast(COLOURREQ + game.freeColorString(), sender);
+					//System.out.println("3");
 				}
 				else {
 					broadcast(JOINDENY + DELIM + "0", sender);
@@ -213,15 +217,54 @@ public class NetworkController extends Thread {
 					broadcast(NOTIFYNEWPLAYER + DELIM + game.getPlayerString());
 				} else { // Color is already taken
 					broadcast(COLOURDENY, sender);
+					broadcast(COLOURREQ + game.freeColorString(), sender);
 				}
 			}
 			
 			// Hij zit niet in een game, of hij heeft geen kleur meegegeven, dus we doen niks
+		} if(cmd.equals(READY)) {
+			sender.getPlayer().setReady(true);
+			//Game game = getGame(sender.getPlayer()).get.setReady(true);
+			for(Game game : games) {
+				System.out.println(game);
+				System.out.println("Isgamereadytostart?");
+				if(game.readyToStart()) {
+					System.out.println(game);
+					System.out.println("gameisready");
+					startGame(game);
+				}
+			}
+		} if(cmd.equals(MOVE)) {
+			try {
+				int color = in.nextInt();
+				System.out.println(color);
+				int col = in.nextInt();
+				System.out.println(col);
+				int row = in.nextInt();
+				System.out.println(row);
+				Game game = getGame(sender.getPlayer());
+				game.doMove(col, row, Color.fromInt(color));
+				broadcast(NOTIFYMOVE + DELIM + color + DELIM + col + DELIM + row);
+				if(game.gameOver()) {
+					broadcast(GAMEEND);
+				}
+				
+			} catch(NullPointerException e) {
+				broadcast(MOVEDENY, sender);
+			}
+			
 		}
 		/*if(cmd.equals(NetworkController.SIGNATURE)) {
 			AuthenticationController ac = new AuthenticationController(controller, this, username);
 			ac.start();
 		}*/
 		in.close();
+	}
+
+	private void startGame(Game game) {
+		System.out.println("In startgame()");
+		broadcast(GAMESTART + DELIM + game.getPlayerString());
+		game.start();
+		
 	}
 }
