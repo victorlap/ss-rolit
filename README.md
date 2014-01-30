@@ -16,7 +16,7 @@ Als de andere spelers ook klaar zijn, start automatisch het spel.
 
 U kunt het spel nu spelen.
 Wilt u een hint opvragen? Klik dan op hint.
-Er wordt ook een `Atack!` knop weergegeven, deze doet overigens niets.
+Er wordt ook een `Attack!` knop weergegeven, deze doet overigens niets.
 Als het spel is afgelopen kunt u weer opnieuw verbinden met de server.
 
 Server
