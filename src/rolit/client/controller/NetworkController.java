@@ -17,7 +17,7 @@ import rolit.Player;
 import rolit.client.SmartComputerPlayer;
 
 public class NetworkController extends Thread {
-	
+
 	public static final String EXTENSIONS 			= "Extensions";
 	public static final String LEADEVERYTHING		= "LeadEverything";
 	public static final String MOVE					= "Move";
@@ -64,7 +64,7 @@ public class NetworkController extends Thread {
 		this.host = host;
 		this.port = port;
 		isRunning = true;
-		
+
 	}
 
 	/**
@@ -133,11 +133,11 @@ public class NetworkController extends Thread {
 		controller.deadConnection();
 	}
 
-	//@ requires command != null;
+	//@ requires line != null;
 	private void execute(String line) {
 		Scanner in = new Scanner(line);
 		String cmd = in.next();
-System.out.println(line);
+		System.out.println(line);
 		if(cmd.equals(EXTENSIONS)) {
 			sendMessage(EXTENSIONSRES + DELIM +"1");
 		}
@@ -152,13 +152,13 @@ System.out.println(line);
 				if(privateKey !=  null) {
 					privateKeyRecieved = true;
 					String message = in.next();
-					
+
 					try {
 						Signature sig = Signature . getInstance ("SHA1withRSA" );
 						sig . initSign ( privateKey );
 						sig . update ( message . getBytes ());
 						byte[] signature = sig . sign ();
-						
+
 						sendMessage(SIGNATURE + DELIM + new String(signature));
 					} catch (NoSuchAlgorithmException e) {
 						controller.alert("Algorithm not defined!");
@@ -192,7 +192,7 @@ System.out.println(line);
 			//sendMessage(READY);
 		}
 		else if(cmd.equals(COLOURDENY) && controller.getPlayer().getColor() != Color.NONE) {
-		/*	controller.connectGUI.bSetReady.setEnabled(true);
+			/*	controller.connectGUI.bSetReady.setEnabled(true);
 			controller.connectGUI.getColor().setEnabled(true);*/
 			controller.alert("Color already in use");
 		}
@@ -229,11 +229,11 @@ System.out.println(line);
 			in.nextInt(); // MOVENUMBER
 			int playerno = in.nextInt();
 
-				controller.gameGUI.jtext.setText("Turn: "+ Color.fromInt(playerno));
-				controller.gameGUI.repaint();
+			controller.gameGUI.jtext.setText("Turn: "+ Color.fromInt(playerno));
+			controller.gameGUI.repaint();
 
 			//int playerno = 1;
-			
+
 			if((controller.getPlayer().getName().equals("AI") || controller.getPlayer().getName().equals("AI2")) && Color.fromInt(playerno) == controller.getPlayer().getColor()) {
 				SmartComputerPlayer scp = new SmartComputerPlayer(controller.getPlayer().getColor());
 				int field = scp.determineMove(controller.getBoard());
@@ -256,7 +256,7 @@ System.out.println(line);
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
+
 			controller.gameEnded();
 		}
 		else if(cmd.equals(LOSSPLAYER)) { // We zijn iemand kwijt
@@ -267,16 +267,16 @@ System.out.println(line);
 		}*/
 		in.close();
 	}
-	
+
 	/*public void setPrivateKey(PrivateKey priv) {
 		this.privateKey = priv;
 	}*/
 
 	public void connectUser(String name, String pass) {
 		this.user = name;
-//		System.out.println(name + "" +pass);
-//		ac = new AuthenticationController(controller, this, name, pass);
-//		ac.start();	
-		
+		//		System.out.println(name + "" +pass);
+		//		ac = new AuthenticationController(controller, this, name, pass);
+		//		ac.start();	
+
 	}
 }

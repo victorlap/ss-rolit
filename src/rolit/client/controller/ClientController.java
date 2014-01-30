@@ -84,9 +84,9 @@ public class ClientController implements Observer, ActionListener {
 	}
 
 	public void deadConnection() {
-		addMessage("Connection to the server failed.");
-		connectGUI.setVisible(true);
 		
+		connectGUI.setVisible(true);
+		alert("Connection to the server failed.");
 		if(gameGUI != null) {
 			gameGUI.setVisible(false);
 		} 

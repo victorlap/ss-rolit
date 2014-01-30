@@ -13,8 +13,10 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.text.DefaultCaret;
 
 import rolit.server.controller.ServerController;
 
@@ -79,12 +81,20 @@ public class ServerGUI extends JFrame {
 
 		JPanel p2 = new JPanel();
 		p2.setLayout(new BorderLayout());
-
+		
 		JLabel lbMessages = new JLabel("Messages:");
 		taMessages = new JTextArea("", 15, 50);
 		taMessages.setEditable(false);
+		DefaultCaret caret = (DefaultCaret)taMessages.getCaret();
+		caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+		JScrollPane p3 = new JScrollPane(taMessages);
+		//p3.setLayout(new ScrollPaneLayout());
+		
+		
+//		p3.add(taMessages);
+//		p3.setSize(500,500);
 		p2.add(lbMessages);
-		p2.add(taMessages, BorderLayout.SOUTH);
+		p2.add(p3, BorderLayout.SOUTH);
 
 		Container cc = getContentPane();
 		cc.setLayout(new FlowLayout());

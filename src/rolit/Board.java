@@ -14,7 +14,7 @@ import rolit.client.SmartComputerPlayer;
 
 public class Board extends Observable {
 	
-	public static final int DIM = 8; // MUST BE EVEN AND >2
+	public static final int DIM = 8; // MUST BE EVEN AND > 2
 	
 	/**
 	 * The DIM by DIM fields of the Tic Tac Toe board. See NUMBERING for the

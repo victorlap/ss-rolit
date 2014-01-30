@@ -29,7 +29,15 @@ public class Game {
 	 * The Board
 	 */
 	private Board board;
+	
+	/**
+	 * NetworkController
+	 */
 	private NetworkController controller;
+	
+	/** 
+	 * isRunning
+	 */
 	private boolean isRunning;
 
 	/**
@@ -37,6 +45,9 @@ public class Game {
 	 */
 	private ArrayList<Player> players;
 	
+	/**
+	 * Count of the move
+	 */
 	private int count = 0;
 
 	/**
@@ -75,20 +86,33 @@ public class Game {
 		nextTurn();
 	}
 	
+	/**
+	 * Returns the amount of players currently in the game
+	 * @return int amount of players
+	 */
 	public int getAmountOfPlayer() {
 		return players.size();
 	}
 	
+	/**
+	 * If the previous turn is correct, this method is executed
+	 */
 	public void nextTurn() {
 		controller.broadcast(NetworkController.TURN + NetworkController.DELIM + count + NetworkController.DELIM + currentPlayer);
 		count++;
 		
 	}
 	
-	
+	/**
+	 * returns the current turn
+	 * @return int
+	 */
 	public int getTurn() {
 		return count;
 	}
+	/**
+	 * Passes the turn to another player
+	 */
 	public void nextPlayer() {
 		currentPlayer = (currentPlayer + 1) % players.size();
 		System.out.println(currentPlayer);
@@ -97,6 +121,13 @@ public class Game {
 		}
 	}
 
+	/**
+	 * Executes the move if the move is correct, then executes nextTurn() and nextPlayer()
+	 * @param col
+	 * @param row
+	 * @param color
+	 * @throws NullPointerException if the player tries to do a move before it's turn
+	 */
 	public void doMove(int col, int row, Color color) throws NullPointerException {
 		System.out.println(color.toString() + currentPlayer);
 		if(currentPlayer != color.toInt()) {
@@ -107,18 +138,34 @@ public class Game {
 		nextTurn();
 	}
 	
+	/**
+	 * Adds a player to the game
+	 * @param newPlayer
+	 */
 	public void addPlayer(Player newPlayer) {
 		players.add(newPlayer);
 	}
 	
+	/**
+	 * Returns if the game is already started
+	 * @return bool
+	 */
 	public boolean isRunning() {
 		return isRunning;
 	}
 
+	/**
+	 * Get all the players who are currently in the game
+	 * @return ArrayList<Player>
+	 */
 	public Collection<Player> getPlayers() {
 		return players;
 	}
 	
+	/**
+	 * Returns a string with the colors that can be chosen according to the AMULET protocol
+	 * @return
+	 */
 	public String freeColorString() {
 		ArrayList<Color> colors = new ArrayList<Color>();
 		colors.add(Color.RED);
@@ -140,6 +187,11 @@ public class Game {
 		return result;
 	}
 
+	/**
+	 * Checks if the color is in use
+	 * @param color
+	 * @return
+	 */
 	public boolean isColorInUse(Color color) {
 		for(Player player : players) {
 			if(player.getColor() == color) {
@@ -149,7 +201,11 @@ public class Game {
 		return false;
 	}
 	
-	
+	/**
+	 * Returns the player for its color
+	 * @param c color
+	 * @return
+	 */
 	public Player getPlayerByColor(Color c) {
 		for(Player player : players) {
 			if(player.getColor() == c) {
@@ -159,6 +215,10 @@ public class Game {
 		return null;
 	}
 
+	/**
+	 * Returns a string representative of the Players who are in the game, according to the AMULET protocol
+	 * @return
+	 */
 	public String getPlayerString() {
 		String result;
 		if(getPlayerByColor(Color.RED) != null) {
@@ -184,11 +244,19 @@ public class Game {
 		return result;
 	}
 
+	/**
+	 * removes a player from the game
+	 * @param player
+	 */
 	public void removePlayer(Player player) {
 		players.remove(player);
 		
 	}
 
+	/**
+	 * Checks if the game is ready to start
+	 * @return
+	 */
 	public boolean readyToStart() {
 		if(players.size() < 2) {
 			return false;
@@ -200,6 +268,7 @@ public class Game {
 		}
 		return true;
 	}
+	
 	@Override
 	public String toString() {
 		String result = "";
@@ -209,6 +278,10 @@ public class Game {
 		return result;
 	}
 
+	/**
+	 * Checks if the game has ended
+	 * @return
+	 */
 	public boolean gameOver() {
 		System.out.println(board);
 		return board.isFull();

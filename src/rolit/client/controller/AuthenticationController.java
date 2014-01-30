@@ -1,25 +1,9 @@
-/*package rolit.client.controller;
+package rolit.client.controller;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.net.InetAddress;
-import java.net.Socket;
-import java.net.UnknownHostException;
-import java.security.KeyFactory;
-import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
-import java.security.spec.InvalidKeySpecException;
-import java.security.spec.PKCS8EncodedKeySpec;
-import java.util.Scanner;
-
-import javax.xml.bind.DatatypeConverter;
 
 public class AuthenticationController extends Thread {
 
-	private ClientController controller;
+	/*private ClientController controller;
 	private NetworkController network;
 	private Socket sock;
 	private BufferedReader in;
@@ -115,6 +99,5 @@ public class AuthenticationController extends Thread {
 		} catch (IOException e) {
 			 Doesn't matter 
 		}
-	}
+	}*/
 }
-*/

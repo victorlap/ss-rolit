@@ -11,9 +11,10 @@ import rolit.Color;
 import rolit.Player;
 import rolit.server.Game;
 
+/** Complex class */
 
 public class NetworkController extends Thread {
-	
+
 	public static final String EXTENSIONS 			= "Extensions";
 	public static final String LEADEVERYTHING		= "LeadEverything";
 	public static final String MOVE					= "Move";
@@ -38,15 +39,15 @@ public class NetworkController extends Thread {
 	public static final String SIGNATURE 			= "Signature";
 	public static final String READY				= "Ready";
 	public static final String DELIM 				= " ";
-	
-	
+
+
 	private int port;
 	private ServerSocket ss;
 	private Collection<ClientHandlerController> threads;
 	private Collection<Game> games;
 	private ServerController controller;
 
-        /** Constructs a new Server object */
+	/** Constructs a new Server object */
 	public NetworkController(int portArg, ServerController controller) {
 		this.port = portArg;
 		this.threads = new ArrayList<ClientHandlerController>();
@@ -63,7 +64,7 @@ public class NetworkController extends Thread {
 	public void run() {
 		try {
 			ss = new ServerSocket(port);
-			
+
 			while(true) {
 
 				Socket newSocket = ss.accept();
@@ -75,12 +76,17 @@ public class NetworkController extends Thread {
 				newHandler.sendMessage(EXTENSIONS);
 			}	
 		} catch (IOException e) {
-			controller.serverGUI.bConnect.setVisible(true);
-			controller.serverGUI.getPort().setVisible(true);
+			controller.serverGUI.bConnect.setEnabled(true);
+			controller.serverGUI.getPort().setEditable(true);
 			controller.addMessage("Server couldn't start because the port is not available");
 		}
 	}
-	
+
+	/**
+	 * Checks if there is already someone with that username logged in to the server
+	 * @param username
+	 * @return
+	 */
 	public boolean isUsernameInUse(String username) {
 		for(ClientHandlerController handler : threads) {
 			if(handler.getPlayer().getName().equals(username)) {
@@ -89,7 +95,12 @@ public class NetworkController extends Thread {
 		}
 		return false;
 	}
-	
+
+	/**
+	 * Checks if the player already is in a game
+	 * @param player
+	 * @return
+	 */
 	public boolean isInGame(Player player) {
 		for(Game game : games) {
 			for(Player inGamePlayer : game.getPlayers()) {
@@ -103,7 +114,7 @@ public class NetworkController extends Thread {
 
 	/**
 	 * Sends a message using the collection of connected ClientHandlers
-         * to all connected Clients.
+	 * to all connected Clients.
 	 * @param msg message that is sent
 	 */
 	public void broadcast(String msg) {
@@ -114,7 +125,7 @@ public class NetworkController extends Thread {
 			controller.addMessage("[BROADCAST] "+ msg);
 		}
 	}
-	
+
 	/** Send message to specific client */
 	public void broadcast(String msg, ClientHandlerController chc) {
 		if(msg != null && chc != null) {
@@ -139,7 +150,12 @@ public class NetworkController extends Thread {
 		getGame(handler.getPlayer()).removePlayer(handler.getPlayer());
 		threads.remove(handler);
 	}
-	
+
+	/**
+	 * Returns a free game if there is one available.
+	 * If not it returns a new Game;
+	 * @return
+	 */
 	public Game getFreeGame() {
 		for(Game game : games) {
 			if(!game.isRunning()) {
@@ -150,7 +166,7 @@ public class NetworkController extends Thread {
 		games.add(newGame);
 		return newGame;
 	}
-	
+
 	/** Get game by player */
 	public Game getGame(Player byPlayer) {
 		for(Game game: games) {
@@ -163,11 +179,16 @@ public class NetworkController extends Thread {
 		/** Hij zit in geen enkele game */
 		return null;
 	}
-	
+
+	/**
+	 * executes a command given by a <code>ClientHAndler</code>
+	 * @param command
+	 * @param sender
+	 */
 	public void execute(String command, ClientHandlerController sender) {
 		Scanner in = new Scanner(command);
 		String cmd = in.next();
-		
+
 		if(cmd.equals(EXTENSIONSRES)) {
 			broadcast(EXTENSIONSCONFIRM + DELIM + "1", sender);
 		}
@@ -177,7 +198,7 @@ public class NetworkController extends Thread {
 				shutdown();
 			} else {
 				this.username = in.next();
-				
+
 				byte[] nonce = new byte[16];
 				Random rand;
 				try {
@@ -220,7 +241,7 @@ public class NetworkController extends Thread {
 					broadcast(COLOURREQ + game.freeColorString(), sender);
 				}
 			}
-			
+
 			// Hij zit niet in een game, of hij heeft geen kleur meegegeven, dus we doen niks
 		} if(cmd.equals(READY)) {
 			sender.getPlayer().setReady(true);
@@ -248,11 +269,11 @@ public class NetworkController extends Thread {
 				if(game.gameOver()) {
 					broadcast(GAMEEND);
 				}
-				
+
 			} catch(NullPointerException e) {
 				broadcast(MOVEDENY, sender);
 			}
-			
+
 		}
 		/*if(cmd.equals(NetworkController.SIGNATURE)) {
 			AuthenticationController ac = new AuthenticationController(controller, this, username);
@@ -261,10 +282,14 @@ public class NetworkController extends Thread {
 		in.close();
 	}
 
+	/**
+	 * Starts a game
+	 * @param game
+	 */
 	private void startGame(Game game) {
 		System.out.println("In startgame()");
 		broadcast(GAMESTART + DELIM + game.getPlayerString());
 		game.start();
-		
+
 	}
 }

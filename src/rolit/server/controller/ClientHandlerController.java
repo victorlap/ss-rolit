@@ -8,6 +8,7 @@ import java.io.OutputStreamWriter;
 import java.net.Socket;
 
 import rolit.Player;
+import rolit.server.controller.NetworkController;
 
 
 /**
@@ -88,6 +89,7 @@ public class ClientHandlerController extends Thread {
          * is no longer participating in the chat. 
 	 */
 	public void shutdown() {
+		network.broadcast(NetworkController.LOSSPLAYER + NetworkController.DELIM + player.getName());
 		network.removeHandler(this);
 		isRunning = false;
 		try {
