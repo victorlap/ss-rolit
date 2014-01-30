@@ -156,7 +156,7 @@ public class BoardTest {
 			int testfield = i; //(int) Math.random()*(b.DIM * b.DIM);
 			assertEquals("Test if grid id is same as index for a random field", 
 					true, 
-					(b.index (b.indexToCol(testfield), b.indexToRow(testfield))) == testfield);
+					(Board.index (Board.indexToCol(testfield), Board.indexToRow(testfield))) == testfield);
 		}
 	}
 	
@@ -171,7 +171,7 @@ public class BoardTest {
 		boolean foundMistake = false;
 		
 		for (int i = 0; i < Board.DIM*Board.DIM; i++) {
-			if (!b.getField(i).equals(b.getField(b.indexToCol(i), b.indexToRow(i)))){
+			if (!b.getField(i).equals(b.getField(Board.indexToCol(i), Board.indexToRow(i)))){
 				foundMistake = true;
 				break;
 			}
@@ -191,7 +191,7 @@ public class BoardTest {
 		boolean foundMistake = false;
 		
 		for (int i = 0; i < Board.DIM*Board.DIM; i++) {
-			if (b.checkMove(i, Color.RED) != b.checkMove(b.indexToCol(i), b.indexToRow(i), Color.RED)) {
+			if (b.checkMove(i, Color.RED) != b.checkMove(Board.indexToCol(i), Board.indexToRow(i), Color.RED)) {
 				foundMistake = true;
 			}
 		}
